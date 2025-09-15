@@ -1,19 +1,24 @@
 # Anime Haven - アニメの安息地
 
-## Stack Tecnologico
+## Stack Tecnológico
+
 ### Frontend
-- NextJS
+- Next.js
 - React
-- TailwindCSS
+- Tailwind CSS
+
 ### Backend
-- NodeJS v22
-### BBDD
+- Node.js v22
+
+### Base de Datos
 - MongoDB
 
-### Software
-- NODE
-- GIT
-- DOCKER
-- DOCKER-COMPOSE
-- POSTMAN
-- DOCKER COMPAS / TABLEPLUS
+---
+
+## Software
+- Node.js
+- Git
+- Docker
+- Docker Compose
+- Postman
+- Docker Compass / TablePlus
