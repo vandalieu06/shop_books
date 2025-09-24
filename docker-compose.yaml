@@ -1,11 +1,9 @@
-version: "3.9"
-
 services:
   backend:
     extends:
       file: ./backend/docker-compose.yaml
-      service: backend
-#  frontend:
-#    extends:
-#      file: ./frontend/docker-compose.yaml
-#      service: frontend      
+      service: mongodb
+  frontend:
+    extends:
+      file: ./frontend/docker-compose.yaml
+      service: apache      
