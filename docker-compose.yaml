@@ -2,9 +2,11 @@ services:
   mongodb:
     image: mongo:latest
     restart: always
+    env_file: 
+      - ".env"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: admin
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
     ports:
       - 27017:27017
     volumes:
@@ -13,6 +15,7 @@ services:
       - app_shop
 volumes:
   mongodb:  
+  
 networks: 
   app_shop:
     driver: bridge
