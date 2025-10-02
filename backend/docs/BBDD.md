@@ -1,6 +1,6 @@
 # Base de Datos Esquema
 
-Este es un ejemplo de la estructura de mi base de datos
+Este 
 
 ## Entidades
 
@@ -107,11 +107,12 @@ Este es un ejemplo de la estructura de mi base de datos
 - Book -> Editorial (N-1)
 - Book -> Review (1-N)
 - (Wishlist) User <-> Book (N - N)
-- Cart -> Card Item (1 - N)
 - Order -> Cart (1 - 1)
+- Cart -> Card Item (1 - N)
+- Card Item -> Book (1 - 1)
 
 ## Diagram
 
 La siguiente imagen es una muestra de como serian las relaciones de las entidades
 
-![image_diagram](/docs/diagrams/sample.png)
+![image_diagram](/backend/docs/diagrams/diagram_entity_relation.drawio.png)

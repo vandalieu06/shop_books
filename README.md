@@ -23,11 +23,15 @@ Bienvenido al repositorio, este es un proyecto de tienda online de libros con un
 
 ## Software
 
-- Node.js
-- Git
-- Docker
-- Docker Compose
-- Postman
-- Docker Compass / TablePlus
-- VSCode
-- Hola mundo
+- [Node.js](https://nodejs.org/es/)
+- [Git](https://git-scm.com/)
+- [Podman](https://podman.io/)
+- [Docker Compose](https://docs.docker.com/compose/)
+- [Hoppscotch](https://hoppscotch.io/)
+- [VSCode](https://code.visualstudio.com/)
+- [Draw.io](https://app.diagrams.net/)
+
+## Referencias
+
+- Documentación ADR: [github.com/joelparkerhenderson](https://github.com/joelparkerhenderson/architecture-decision-record/tree/main/locales/en/templates/decision-record-template-by-michael-nygard)
+- d
