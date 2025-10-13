@@ -1,6 +1,6 @@
 # Base de Datos Esquema
 
-Este 
+Este
 
 ## Entidades
 
@@ -42,10 +42,10 @@ Este
 - description
 - num_pages
 - language
-- year
-- type
+- year_publish
+- type_book
 - price
-- unitStock
+- unit_stock
 
 ### Author
 
