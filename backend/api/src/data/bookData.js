@@ -1,4 +1,4 @@
-[
+const bookData = [
   {
     isbn: "978-8423359647",
     name: "La Ciudad del Vapor",
@@ -48,3 +48,5 @@
     unit_stock: 200,
   },
 ];
+
+module.exports = bookData;

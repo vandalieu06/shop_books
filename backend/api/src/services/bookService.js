@@ -13,8 +13,13 @@ const createBook = async (bookData) => {
   return await newBook.save();
 };
 
+const createManyBooks = async (booksData) => {
+  return await Book.insertMany(booksData);
+};
+
 module.exports = {
   getBook,
   getAllBooks,
   createBook,
+  createManyBooks,
 };

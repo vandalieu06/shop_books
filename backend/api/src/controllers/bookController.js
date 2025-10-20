@@ -27,8 +27,18 @@ const createBook = async (req, res) => {
   }
 };
 
+const createManyBooks = async (req, res) => {
+  try {
+    const products = await bookService.createManyBooks(req.body);
+    res.status(201).json({ status: "success", data: products });
+  } catch (error) {
+    res.status(400).json({ status: "error", message: error.message });
+  }
+};
+
 module.exports = {
   getBook,
   getAllBooks,
   createBook,
+  createManyBooks,
 };
