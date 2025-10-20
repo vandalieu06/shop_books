@@ -12,16 +12,16 @@ const seedDatabase = async () => {
     if (bookCount === 0) {
       console.log("DB vacía. Insertando datos de prueba...");
       await Book.insertMany(bookData);
-      console.log("Datos de prueba insertados correctamente.");
+      console.log("Book - Datos de prueba insertados correctamente.");
     }
 
     if (userCount === 0) {
       console.log("DB vacía. Insertando datos de prueba...");
       await User.insertMany(userData);
-      console.log("Datos de prueba insertados correctamente.");
+      console.log("Usuario - Datos de prueba insertados correctamente.");
     }
   } catch (err) {
-    console.error("❌ Error en el proceso de Seeding:", err.message);
+    console.error("Error en el proceso de Seeding:", err.message);
   }
 };
 
