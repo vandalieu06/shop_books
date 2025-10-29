@@ -11,9 +11,19 @@ services:
       - mongodb:/data/db
     networks:
       - app_shop
+
+  api:
+    build: ./api
+    ports:
+      - 3000:3000
+    depends_on:
+      - mongodb
+    networks:
+      - app_shop
+
 volumes:
-  mongodb:  
-  
-networks: 
+  mongodb:
+
+networks:
   app_shop:
     driver: bridge

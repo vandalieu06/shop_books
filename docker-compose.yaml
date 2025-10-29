@@ -1,14 +1,4 @@
-services:
-  backend:
-    extends:
-      file: ./backend/docker-compose.yaml
-      service: mongodb
-  frontend:
-    extends:
-      file: ./frontend/docker-compose.yaml
-      service: apache      
-volumes:
-  mongodb:  
-networks: 
-  app_shop:
-    driver: bridge
+version: "3.8"
+include:
+  - backend/docker-compose.yaml
+  - frontend/docker-compose.yaml

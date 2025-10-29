@@ -6,7 +6,7 @@
             "label": "setup: inicializar contenedores (Podman)",
             "type": "shell",
             // El comando se ejecuta en la carpeta raíz (D:\developer\proyectos\shop_books)
-            "command": "podman compose up -d",
+            "command": "podman compose up",
             "problemMatcher": [],
             "options": {
                 // Ejecuta el comando en el directorio de trabajo actual (la raíz del proyecto)
