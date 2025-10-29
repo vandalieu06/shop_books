@@ -11,6 +11,7 @@ const userViewRoutes = require("./routes/userViewRoute.js");
 
 //Variables globales
 const PORT = process.env.PORT || 3000;
+const MONGO_URI = process.env.MONGO_URI | "hello";
 const app = express();
 
 //Config Handlebars
@@ -24,7 +25,7 @@ app.engine(
       allowProtoPropertiesByDefault: true,
       allowProtoMethodsByDefault: true,
     },
-  })
+  }),
 );
 app.set("view engine", "hbs");
 
@@ -39,4 +40,7 @@ app.use("/api/books", bookRoutes);
 app.use("/books", bookViewRoutes);
 app.use("/users", userViewRoutes);
 
-app.listen(PORT, () => console.log(`Servidor escoltant al port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Servidor escoltant al port ${PORT}`);
+  console.log(`${MONGO_URI}`);
+});

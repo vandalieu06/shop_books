@@ -5,6 +5,12 @@ Bienvenido al repositorio, este es un proyecto de tienda online de libros con un
 - Dominio web: libreríaakiba.com
 - Hosting: docker (actual)
 
+## Start
+
+```bash
+podman compose up --build -
+```
+
 ## Stack Tecnológico
 
 ### Frontend
