@@ -44,6 +44,18 @@ const userSchema = new Schema({
     type: String,
     required: [true, "La contraseña es obligatoria"],
   },
+  address: [
+    {
+      adress_name: { type: String },
+      city: { type: String },
+      zipcode: { type: String },
+      country: { type: String },
+    },
+  ],
+  cart: {
+    type: mongoose.Schema.ObjectId,
+    ref: "Cart",
+  },
 });
 
 module.exports = mongoose.model("User", userSchema);

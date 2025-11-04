@@ -61,6 +61,23 @@ const bookSchema = new Schema({
     default: 0,
     min: [0, "El stock no puede ser inferior a 0"],
   },
+  publisher: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Publisher",
+    required: true,
+  },
+  authors: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Author",
+    },
+  ],
+  categories: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+    },
+  ],
 });
 
 module.exports = mongoose.model("Book", bookSchema);
