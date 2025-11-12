@@ -13,8 +13,13 @@ const createUser = async (userData) => {
   return await newUser.save();
 };
 
+const linkCartToUser = async (userId, cartId) => {
+  return await User.findByIdAndUpdate(userId, { cart: cartId }, { new: true });
+};
+
 module.exports = {
   getUser,
   getAllUsers,
   createUser,
+  linkCartToUser,
 };
