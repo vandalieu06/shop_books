@@ -1,3 +1,4 @@
+const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
@@ -56,6 +57,14 @@ const userSchema = new Schema({
     type: mongoose.Schema.ObjectId,
     ref: "Cart",
   },
+});
+
+// Hasheamos la password si está se ha introducido por primera vez
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
 });
 
 module.exports = mongoose.model("User", userSchema);

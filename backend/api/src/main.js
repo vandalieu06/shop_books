@@ -1,20 +1,23 @@
 require("dotenv").config();
 const express = require("express");
-const exphbs = require("express-handlebars");
 const path = require("path");
 const connectDB = require("./config/db");
 
+// API Routes File
 const userRoutes = require("./routes/userRoute.js");
 const bookRoutes = require("./routes/bookRouter.js");
+
+// Temporal View Routes Files + package
+const exphbs = require("express-handlebars");
 const bookViewRoutes = require("./routes/bookViewRouter.js");
 const userViewRoutes = require("./routes/userViewRoute.js");
 
-//Variables globales
+// Variables globales
 const PORT = process.env.PORT || 3000;
-const MONGO_URI = process.env.MONGO_URI | "hello";
+const MONGO_URI = process.env.MONGO_URI;
 const app = express();
 
-//Config Handlebars
+// Config Handlebars
 app.set("views", path.join(__dirname, "views"));
 app.engine(
   "hbs",
@@ -33,14 +36,15 @@ app.set("view engine", "hbs");
 app.use(express.json());
 connectDB();
 
-// Rutas de la API
+// API Routes
 app.get("/", (req, res) => res.send("API Ecommerce en marxa"));
 app.use("/api/usuarios", userRoutes);
 app.use("/api/books", bookRoutes);
+
+// Temporal View Routes
 app.use("/books", bookViewRoutes);
 app.use("/users", userViewRoutes);
 
 app.listen(PORT, () => {
   console.log(`Servidor escoltant al port ${PORT}`);
-  console.log(`${MONGO_URI}`);
 });
