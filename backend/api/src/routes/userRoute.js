@@ -6,5 +6,6 @@ router.get("/", userController.getAllUsers);
 router.get("/:id", userController.getUser);
 router.post("/add", userController.createUser);
 router.post("/login", userController.login);
+router.post("/refresh", userController.refresh);
 
 module.exports = router;

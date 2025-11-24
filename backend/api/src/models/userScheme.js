@@ -57,6 +57,9 @@ const userSchema = new Schema({
     type: mongoose.Schema.ObjectId,
     ref: "Cart",
   },
+  refreshToken: {
+    type: String,
+  },
 });
 
 // Hasheamos la password si está se ha introducido por primera vez

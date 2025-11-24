@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const path = require("path");
-const connectDB = require("./config/db");
+const connectDB = require("./config/db.js");
 
 // API Routes File
 const userRoutes = require("./routes/userRoute.js");
@@ -9,12 +9,11 @@ const bookRoutes = require("./routes/bookRouter.js");
 
 // Temporal View Routes Files + package
 const exphbs = require("express-handlebars");
-const bookViewRoutes = require("./routes/bookViewRouter.js");
-const userViewRoutes = require("./routes/userViewRoute.js");
+const bookViewRoutes = require("./routes/pages/bookViewRouter.js");
+const userViewRoutes = require("./routes/pages/userViewRoute.js");
 
 // Variables globales
 const PORT = process.env.PORT || 3000;
-const MONGO_URI = process.env.MONGO_URI;
 const app = express();
 
 // Config Handlebars
@@ -37,7 +36,7 @@ app.use(express.json());
 connectDB();
 
 // API Routes
-app.get("/", (req, res) => res.send("API Ecommerce en marxa"));
+app.get("/", (_, res) => res.send("API Ecommerce en marxa"));
 app.use("/api/usuarios", userRoutes);
 app.use("/api/books", bookRoutes);
 
@@ -45,6 +44,4 @@ app.use("/api/books", bookRoutes);
 app.use("/books", bookViewRoutes);
 app.use("/users", userViewRoutes);
 
-app.listen(PORT, () => {
-  console.log(`Servidor escoltant al port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Servidor escoltant al port ${PORT}`));
