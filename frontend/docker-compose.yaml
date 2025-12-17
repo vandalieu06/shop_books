@@ -1,7 +1,11 @@
 services:
-  apache:
-    image: httpd:2.4
-    container_name: apache_test
+  frontend:
+    build: .
+    container_name: vite_app
     ports:
-      - "8888:80"
-    restart: always
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
