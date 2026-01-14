@@ -68,7 +68,7 @@ const App = () => {
 	];
 
 	return (
-		<div className="min-h-screen bg-gradient-to-b from-amber-50 to-white">
+		<div className="min-h-screen bg-linear-to-b from-amber-50 to-white">
 			{/* Header */}
 			<header className="bg-white shadow-sm sticky top-0 z-50">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -114,10 +114,16 @@ const App = () => {
 							>
 								<User className="w-6 h-6" />
 							</a>
-							<button className="text-gray-700 hover:text-amber-600 transition">
+							<button
+								type="button"
+								className="text-gray-700 hover:text-amber-600 transition"
+							>
 								<Heart className="w-6 h-6" />
 							</button>
-							<button className="relative text-gray-700 hover:text-amber-600 transition">
+							<button
+								type="button"
+								className="relative text-gray-700 hover:text-amber-600 transition"
+							>
 								<ShoppingCart className="w-6 h-6" />
 								<span className="absolute -top-2 -right-2 bg-amber-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
 									3
@@ -149,16 +155,25 @@ const App = () => {
 									onChange={(e) => setSearchQuery(e.target.value)}
 									className="w-full px-6 py-4 bg-white rounded-full text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-amber-300 shadow-lg"
 								/>
-								<button className="absolute right-2 top-2 bg-amber-600 text-white p-2 rounded-full hover:bg-amber-700 transition">
+								<button
+									type="button"
+									className="absolute right-2 top-2 bg-amber-600 text-white p-2 rounded-full hover:bg-amber-700 transition"
+								>
 									<Search className="w-6 h-6" />
 								</button>
 							</div>
 
 							<div className="flex gap-4 mt-8">
-								<button className="bg-white text-amber-600 px-8 py-3 rounded-full font-semibold hover:bg-amber-50 transition shadow-lg">
+								<button
+									type="button"
+									className="bg-white text-amber-600 px-8 py-3 rounded-full font-semibold hover:bg-amber-50 transition shadow-lg"
+								>
 									Ver Ofertas
 								</button>
-								<button className="border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-amber-600 transition">
+								<button
+									type="button"
+									className="border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-amber-600 transition"
+								>
 									Explorar
 								</button>
 							</div>
@@ -223,9 +238,10 @@ const App = () => {
 						Explora por Categorías
 					</h2>
 					<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-						{categories.map((category, index) => (
+						{categories.map((category, i) => (
 							<button
-								key={index}
+								type="button"
+								key={`btn-cat-${i}`}
 								className={`${category.color} p-6 rounded-xl hover:shadow-lg transition duration-300 transform hover:-translate-y-1`}
 							>
 								<div className="text-4xl mb-2">{category.icon}</div>
@@ -243,7 +259,10 @@ const App = () => {
 						<h2 className="text-3xl font-bold text-gray-900">
 							Libros Destacados
 						</h2>
-						<button className="text-amber-600 font-semibold hover:text-amber-700 transition">
+						<button
+							type="button"
+							className="text-amber-600 font-semibold hover:text-amber-700 transition"
+						>
 							Ver todos →
 						</button>
 					</div>
@@ -263,7 +282,10 @@ const App = () => {
 									<span className="absolute top-4 left-4 bg-amber-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
 										{book.badge}
 									</span>
-									<button className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md hover:bg-amber-600 hover:text-white transition">
+									<button
+										type="button"
+										className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md hover:bg-amber-600 hover:text-white transition"
+									>
 										<Heart className="w-5 h-5" />
 									</button>
 								</div>
@@ -281,7 +303,10 @@ const App = () => {
 										<span className="text-2xl font-bold text-amber-600">
 											€{book.price}
 										</span>
-										<button className="bg-amber-600 text-white px-4 py-2 rounded-lg hover:bg-amber-700 transition font-semibold">
+										<button
+											type="button"
+											className="bg-amber-600 text-white px-4 py-2 rounded-lg hover:bg-amber-700 transition font-semibold"
+										>
 											Añadir
 										</button>
 									</div>
@@ -293,7 +318,7 @@ const App = () => {
 			</section>
 
 			{/* Newsletter */}
-			<section className="py-16 bg-gradient-to-r from-amber-600 to-orange-500 text-white">
+			<section className="py-16 bg-linear-to-r from-amber-600 to-orange-500 text-white">
 				<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
 					<h2 className="text-3xl font-bold mb-4">
 						Suscríbete a Nuestro Newsletter
@@ -307,7 +332,10 @@ const App = () => {
 							placeholder="Tu correo electrónico"
 							className="flex-1 px-6 py-4 bg-white rounded-full text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-amber-300"
 						/>
-						<button className="bg-white text-amber-600 px-8 py-4 rounded-full font-semibold hover:bg-amber-50 transition shadow-lg whitespace-nowrap">
+						<button
+							type="button"
+							className="bg-white text-amber-600 px-8 py-4 rounded-full font-semibold hover:bg-amber-50 transition shadow-lg whitespace-nowrap"
+						>
 							Suscribirse
 						</button>
 					</div>
