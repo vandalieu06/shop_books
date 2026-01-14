@@ -8,7 +8,7 @@ Bienvenido al repositorio, este es un proyecto de tienda online de libros con un
 ## Start
 
 ```bash
-podman compose up --build -
+make up
 ```
 
 ## Stack Tecnológico

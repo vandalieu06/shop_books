@@ -1,3 +1,5 @@
+import { Search } from "lucide-react";
+
 const Hero = ({ searchQuery, setSearchQuery }) => {
 	return (
 		<section className="relative bg-linear-to-r from-amber-600 to-orange-500 text-white py-20">
