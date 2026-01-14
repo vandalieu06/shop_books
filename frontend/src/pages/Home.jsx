@@ -1,141 +1,16 @@
-import {
-	BookOpen,
-	Search,
-	ShoppingCart,
-	Star,
-	TrendingUp,
-	User,
-	Heart,
-	Package,
-	Truck,
-	Shield,
-} from "lucide-react";
 import { useState } from "react";
+import { featuredBooks } from "../data/books";
+import { categories } from "../data/categories";
+
+import { Heart, Package, Search, Shield, Star, Truck } from "lucide-react";
 
 const App = () => {
 	const [searchQuery, setSearchQuery] = useState("");
 
-	const featuredBooks = [
-		{
-			id: 1,
-			title: "Cien Años de Soledad",
-			author: "Gabriel García Márquez",
-			price: 18.99,
-			rating: 4.8,
-			image:
-				"https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=300&h=400&fit=crop",
-			badge: "Bestseller",
-		},
-		{
-			id: 2,
-			title: "El Principito",
-			author: "Antoine de Saint-Exupéry",
-			price: 12.99,
-			rating: 4.9,
-			image:
-				"https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=300&h=400&fit=crop",
-			badge: "Clásico",
-		},
-		{
-			id: 3,
-			title: "1984",
-			author: "George Orwell",
-			price: 15.99,
-			rating: 4.7,
-			image:
-				"https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=300&h=400&fit=crop",
-			badge: "Popular",
-		},
-		{
-			id: 4,
-			title: "Don Quijote",
-			author: "Miguel de Cervantes",
-			price: 22.99,
-			rating: 4.6,
-			image:
-				"https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300&h=400&fit=crop",
-			badge: "Clásico",
-		},
-	];
-
-	const categories = [
-		{ name: "Ficción", icon: "📚", color: "bg-purple-100 text-purple-700" },
-		{ name: "No Ficción", icon: "📖", color: "bg-blue-100 text-blue-700" },
-		{ name: "Ciencia", icon: "🔬", color: "bg-green-100 text-green-700" },
-		{ name: "Historia", icon: "🏛️", color: "bg-amber-100 text-amber-700" },
-		{ name: "Infantil", icon: "🎨", color: "bg-pink-100 text-pink-700" },
-		{ name: "Romance", icon: "💝", color: "bg-rose-100 text-rose-700" },
-	];
-
 	return (
 		<div className="min-h-screen bg-linear-to-b from-amber-50 to-white">
-			{/* Header */}
-			<header className="bg-white shadow-sm sticky top-0 z-50">
-				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-					<div className="flex items-center justify-between h-16">
-						<div className="flex items-center space-x-2">
-							<BookOpen className="w-8 h-8 text-amber-600" />
-							<span className="text-2xl font-bold text-gray-900">
-								LibroMundo
-							</span>
-						</div>
-
-						<nav className="hidden md:flex space-x-8">
-							<a
-								href="#"
-								className="text-gray-700 hover:text-amber-600 font-medium transition"
-							>
-								Inicio
-							</a>
-							<a
-								href="#"
-								className="text-gray-700 hover:text-amber-600 font-medium transition"
-							>
-								Categorías
-							</a>
-							<a
-								href="#"
-								className="text-gray-700 hover:text-amber-600 font-medium transition"
-							>
-								Bestsellers
-							</a>
-							<a
-								href="#"
-								className="text-gray-700 hover:text-amber-600 font-medium transition"
-							>
-								Ofertas
-							</a>
-						</nav>
-
-						<div className="flex items-center space-x-4">
-							<a
-								href="/login"
-								className="text-gray-700 hover:text-amber-600 transition"
-							>
-								<User className="w-6 h-6" />
-							</a>
-							<button
-								type="button"
-								className="text-gray-700 hover:text-amber-600 transition"
-							>
-								<Heart className="w-6 h-6" />
-							</button>
-							<button
-								type="button"
-								className="relative text-gray-700 hover:text-amber-600 transition"
-							>
-								<ShoppingCart className="w-6 h-6" />
-								<span className="absolute -top-2 -right-2 bg-amber-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-									3
-								</span>
-							</button>
-						</div>
-					</div>
-				</div>
-			</header>
-
 			{/* Hero Section */}
-			<section className="relative bg-gradient-to-r from-amber-600 to-orange-500 text-white py-20">
+			<section className="relative bg-linear-to-r from-amber-600 to-orange-500 text-white py-20">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="grid md:grid-cols-2 gap-12 items-center">
 						<div>
@@ -241,7 +116,7 @@ const App = () => {
 						{categories.map((category, i) => (
 							<button
 								type="button"
-								key={`btn-cat-${i}`}
+								key={`btn-cat-${i++}`}
 								className={`${category.color} p-6 rounded-xl hover:shadow-lg transition duration-300 transform hover:-translate-y-1`}
 							>
 								<div className="text-4xl mb-2">{category.icon}</div>
@@ -341,96 +216,6 @@ const App = () => {
 					</div>
 				</div>
 			</section>
-
-			{/* Footer */}
-			<footer className="bg-gray-900 text-white py-12">
-				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-					<div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-						<div>
-							<div className="flex items-center space-x-2 mb-4">
-								<BookOpen className="w-8 h-8 text-amber-500" />
-								<span className="text-2xl font-bold">LibroMundo</span>
-							</div>
-							<p className="text-gray-400">
-								Tu librería online de confianza desde 2010
-							</p>
-						</div>
-						<div>
-							<h3 className="font-semibold text-lg mb-4">Compra</h3>
-							<ul className="space-y-2 text-gray-400">
-								<li>
-									<a href="#" className="hover:text-amber-500 transition">
-										Novedades
-									</a>
-								</li>
-								<li>
-									<a href="#" className="hover:text-amber-500 transition">
-										Bestsellers
-									</a>
-								</li>
-								<li>
-									<a href="#" className="hover:text-amber-500 transition">
-										Ofertas
-									</a>
-								</li>
-								<li>
-									<a href="#" className="hover:text-amber-500 transition">
-										Preventa
-									</a>
-								</li>
-							</ul>
-						</div>
-						<div>
-							<h3 className="font-semibold text-lg mb-4">Ayuda</h3>
-							<ul className="space-y-2 text-gray-400">
-								<li>
-									<a href="#" className="hover:text-amber-500 transition">
-										Contacto
-									</a>
-								</li>
-								<li>
-									<a href="#" className="hover:text-amber-500 transition">
-										Envíos
-									</a>
-								</li>
-								<li>
-									<a href="#" className="hover:text-amber-500 transition">
-										Devoluciones
-									</a>
-								</li>
-								<li>
-									<a href="#" className="hover:text-amber-500 transition">
-										FAQ
-									</a>
-								</li>
-							</ul>
-						</div>
-						<div>
-							<h3 className="font-semibold text-lg mb-4">Legal</h3>
-							<ul className="space-y-2 text-gray-400">
-								<li>
-									<a href="#" className="hover:text-amber-500 transition">
-										Privacidad
-									</a>
-								</li>
-								<li>
-									<a href="#" className="hover:text-amber-500 transition">
-										Términos
-									</a>
-								</li>
-								<li>
-									<a href="#" className="hover:text-amber-500 transition">
-										Cookies
-									</a>
-								</li>
-							</ul>
-						</div>
-					</div>
-					<div className="border-t border-gray-800 pt-8 text-center text-gray-400">
-						<p>&copy; 2024 LibroMundo. Todos los derechos reservados.</p>
-					</div>
-				</div>
-			</footer>
 		</div>
 	);
 };

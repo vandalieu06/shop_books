@@ -1,21 +1,15 @@
 import { Outlet } from "react-router-dom";
+import Footer from "./components/ui/Footer.jsx";
+import Header from "./components/ui/Header.jsx";
 
 export default function App() {
 	return (
 		<div className="layout-container">
-			{/* <header className="w-full py-6 px-4 bg-gray-800 text-white">
-				<nav>
-					<p className="text-center">Mi Barra de Navegación</p>
-				</nav>
-			</header>*/}
-
+			<Header />
 			<main>
 				<Outlet />
 			</main>
-
-			{/* <footer className="w-full py-6 px-4 bg-gray-200 text-center text-sm">
-				Mi Footer Fijo
-			</footer>*/}
+			<Footer />
 		</div>
 	);
 }
