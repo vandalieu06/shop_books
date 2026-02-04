@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const cors = require("cors");
 const path = require("path");
 const connectDB = require("./config/db.js");
 
@@ -16,18 +17,21 @@ const userViewRoutes = require("./routes/pages/userViewRoute.js");
 const PORT = process.env.PORT || 3000;
 const app = express();
 
+// Cors
+app.use(cors());
+
 // Config Handlebars
 app.set("views", path.join(__dirname, "views"));
 app.engine(
-  "hbs",
-  exphbs.engine({
-    defaultLayout: "main",
-    extname: ".hbs",
-    runtimeOptions: {
-      allowProtoPropertiesByDefault: true,
-      allowProtoMethodsByDefault: true,
-    },
-  }),
+	"hbs",
+	exphbs.engine({
+		defaultLayout: "main",
+		extname: ".hbs",
+		runtimeOptions: {
+			allowProtoPropertiesByDefault: true,
+			allowProtoMethodsByDefault: true,
+		},
+	}),
 );
 app.set("view engine", "hbs");
 

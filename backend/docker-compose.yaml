@@ -10,7 +10,7 @@ services:
     volumes:
       - mongodb:/data/db
     networks:
-      - app_shop
+      - app_shop_network
 
   api:
     build: ./api
@@ -21,11 +21,11 @@ services:
     volumes:
       - ./api:/api
     networks:
-      - app_shop
+      - app_shop_network
 
 volumes:
   mongodb:
 
 networks:
-  app_shop:
-    driver: bridge
+  app_shop_network:
+    external: true

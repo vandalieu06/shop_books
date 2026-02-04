@@ -1,31 +1,19 @@
 import {
 	BookOpen,
-	Heart,
 	Menu,
 	Minus,
 	Plus,
 	Search,
 	ShoppingCart,
 	Trash2,
-	User,
 	X,
 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { useCart } from "../../contexts/CartContext";
 
 const NAV_PAGES = ["inicio", "categorías", "bestsellers", "ofertas"];
 
-// --- Componentes Internos del Header ---
-
-const NavLink = ({ text }) => (
-	<a
-		href={`#${text}`}
-		className="text-gray-600 hover:text-amber-600 font-medium transition-colors duration-200 capitalize relative group"
-	>
-		{text}
-		<span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-amber-500 transition-all group-hover:w-full"></span>
-	</a>
-);
-
+// --- Sub-componente: Item individual del carrito ---
 const CartItem = ({ item, onUpdateQuantity, onRemove }) => (
 	<div className="flex gap-4 p-3 bg-white border border-gray-100 rounded-xl hover:shadow-md transition-shadow">
 		<img
@@ -67,29 +55,20 @@ const CartItem = ({ item, onUpdateQuantity, onRemove }) => (
 					</button>
 				</div>
 				<span className="text-sm font-bold text-amber-600">
-					{item.price.toFixed(2)}€
+					{(item.price * item.quantity).toFixed(2)}€
 				</span>
 			</div>
 		</div>
 	</div>
 );
 
-// --- Componente de Exportación Principal ---
-
-export default function App() {
-	const [isCartOpen, setIsCartOpen] = useState(false);
+// --- Componente Header Principal ---
+export default function Header() {
+	const { cartItems, isCartOpen, setIsCartOpen, updateQuantity, removeItem } =
+		useCart();
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
-	const [cartItems, setCartItems] = useState([
-		{
-			id: 1,
-			title: "Akira Vol. 1",
-			price: 24.99,
-			quantity: 1,
-			image:
-				"https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&q=80&w=200",
-		},
-	]);
 
+	// Cálculos derivados de las props
 	const cartCount = useMemo(
 		() => cartItems.reduce((acc, item) => acc + item.quantity, 0),
 		[cartItems],
@@ -100,27 +79,12 @@ export default function App() {
 		[cartItems],
 	);
 
-	const updateQuantity = (id, delta) => {
-		setCartItems((prev) =>
-			prev.map((item) =>
-				item.id === id
-					? { ...item, quantity: Math.max(1, item.quantity + delta) }
-					: item,
-			),
-		);
-	};
-
-	const removeItem = (id) => {
-		setCartItems((prev) => prev.filter((item) => item.id !== id));
-	};
-
 	return (
 		<>
-			{/* --- HEADER --- */}
 			<header className="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-50 w-full border-b border-gray-100">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="flex items-center justify-between h-16 sm:h-20">
-						{/* Menú Móvil & Logo */}
+						{/* Logo y Menú Móvil */}
 						<div className="flex items-center gap-2">
 							<button
 								type="button"
@@ -142,32 +106,21 @@ export default function App() {
 						{/* Navegación Desktop */}
 						<nav className="hidden md:flex items-center space-x-8">
 							{NAV_PAGES.map((p) => (
-								<NavLink key={p} text={p} />
+								<a
+									key={p}
+									href={`#${p}`}
+									className="text-gray-600 hover:text-amber-600 font-medium transition-colors capitalize"
+								>
+									{p}
+								</a>
 							))}
 						</nav>
 
-						{/* Acciones de Usuario */}
+						{/* Acciones */}
 						<div className="flex items-center space-x-1 sm:space-x-4">
-							<button
-								type="button"
-								className="hidden sm:flex p-2 text-gray-500 hover:text-amber-600 transition"
-							>
+							<button className="p-2 text-gray-500 hover:text-amber-600 transition">
 								<Search className="w-5 h-5" />
 							</button>
-							<button
-								type="button"
-								className="p-2 text-gray-500 hover:text-amber-600 transition"
-							>
-								<User className="w-5 h-5" />
-							</button>
-							<button
-								type="button"
-								className="relative p-2 text-gray-500 hover:text-red-500 transition"
-							>
-								<Heart className="w-5 h-5" />
-							</button>
-
-							{/* Botón Carrito */}
 							<button
 								type="button"
 								onClick={() => setIsCartOpen(true)}
@@ -187,7 +140,7 @@ export default function App() {
 					</div>
 				</div>
 
-				{/* Menú Desplegable Móvil */}
+				{/* Menú Móvil Desplegable */}
 				{isMenuOpen && (
 					<div className="md:hidden bg-white border-t border-gray-100 p-4 space-y-4 shadow-xl">
 						{NAV_PAGES.map((p) => (
@@ -203,18 +156,16 @@ export default function App() {
 				)}
 			</header>
 
-			{/* --- PANEL LATERAL DEL CARRITO --- */}
+			{/* --- CARRITO LATERAL (Drawer) --- */}
 			<div
-				className={`fixed inset-0 z-100 transition-all duration-300 ${isCartOpen ? "visible" : "invisible"}`}
+				className={`fixed inset-0 z-[100] transition-all duration-300 ${isCartOpen ? "visible" : "invisible"}`}
 			>
-				{/* Fondo oscuro */}
-				<button
-					type="button"
+				{/* Overlay */}
+				<div
 					className={`absolute inset-0 bg-gray-900/40 backdrop-blur-sm transition-opacity duration-300 ${isCartOpen ? "opacity-100" : "opacity-0"}`}
 					onClick={() => setIsCartOpen(false)}
 				/>
 
-				{/* Contenedor lateral */}
 				<div
 					className={`absolute inset-y-0 right-0 w-full max-w-sm bg-white shadow-2xl transform transition-transform duration-300 ease-out flex flex-col ${isCartOpen ? "translate-x-0" : "translate-x-full"}`}
 				>
@@ -223,9 +174,8 @@ export default function App() {
 							<ShoppingCart className="w-5 h-5" /> Mi Carrito
 						</h2>
 						<button
-							type="button"
 							onClick={() => setIsCartOpen(false)}
-							className="p-2 text-gray-400 hover:text-gray-900 transition rounded-full"
+							className="p-2 text-gray-400 hover:text-gray-900 transition"
 						>
 							<X className="w-6 h-6" />
 						</button>
@@ -255,10 +205,7 @@ export default function App() {
 								<span>Total</span>
 								<span>{totalPrice.toFixed(2)}€</span>
 							</div>
-							<button
-								type="button"
-								className="w-full bg-gray-900 hover:bg-amber-600 text-white py-4 rounded-xl font-bold transition-colors shadow-lg shadow-gray-200"
-							>
+							<button className="w-full bg-gray-900 hover:bg-amber-600 text-white py-4 rounded-xl font-bold transition-colors shadow-lg">
 								Finalizar Pedido
 							</button>
 						</div>
