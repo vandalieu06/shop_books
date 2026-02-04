@@ -118,7 +118,10 @@ export default function Header() {
 
 						{/* Acciones */}
 						<div className="flex items-center space-x-1 sm:space-x-4">
-							<button className="p-2 text-gray-500 hover:text-amber-600 transition">
+							<button
+								type="button"
+								className="p-2 text-gray-500 hover:text-amber-600 transition"
+							>
 								<Search className="w-5 h-5" />
 							</button>
 							<button
@@ -174,6 +177,7 @@ export default function Header() {
 							<ShoppingCart className="w-5 h-5" /> Mi Carrito
 						</h2>
 						<button
+							type="button"
 							onClick={() => setIsCartOpen(false)}
 							className="p-2 text-gray-400 hover:text-gray-900 transition"
 						>
@@ -205,7 +209,10 @@ export default function Header() {
 								<span>Total</span>
 								<span>{totalPrice.toFixed(2)}€</span>
 							</div>
-							<button className="w-full bg-gray-900 hover:bg-amber-600 text-white py-4 rounded-xl font-bold transition-colors shadow-lg">
+							<button
+								type="button"
+								className="w-full bg-gray-900 hover:bg-amber-600 text-white py-4 rounded-xl font-bold transition-colors shadow-lg"
+							>
 								Finalizar Pedido
 							</button>
 						</div>
