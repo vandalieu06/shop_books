@@ -1,31 +1,60 @@
-const { Cart, CartItem } = require("../models/cartScheme");
+const { Cart } = require("../models/cartScheme");
 
-const getCart = async (cartId) => {
-  return await Cart.findOne({ _id: cartId }, { _id: 0, __v: 0, user: 0 })
+const getCart = async (userId) => {
+  return await Cart.findOne({ user: userId })
     .populate({
       path: "items.book",
-      select: "title author price imageUrl",
+      select: "name isbn price image unit_stock",
     })
     .lean();
 };
 
 const createCart = async (cartData) => {
-  const newCart = await Cart(cartData);
+  const newCart = new Cart(cartData);
   return await newCart.save();
 };
 
-const addCartItem = async (userId, dataCartItem) => {
-  const updatedCart = await Cart.findOneAndUpdate(
-    { user: userId },
-    { $push: { items: dataCartItem } },
-    { new: true, runValidators: true, upsert: true },
+const addCartItem = async (userId, item) => {
+  let cart = await Cart.findOne({ user: userId });
+  
+  if (!cart) {
+    cart = new Cart({ user: userId, items: [item] });
+    return await cart.save();
+  }
+  
+  const existingItemIndex = cart.items.findIndex(
+    i => i.book.toString() === item.book.toString()
   );
-  return updatedCart;
+  
+  if (existingItemIndex > -1) {
+    cart.items[existingItemIndex].quantity += item.quantity;
+  } else {
+    cart.items.push(item);
+  }
+  
+  return await cart.save();
+};
+
+const removeCartItem = async (userId, bookId) => {
+  return await Cart.findOneAndUpdate(
+    { user: userId },
+    { $pull: { items: { book: bookId } } },
+    { new: true }
+  );
+};
+
+const clearCart = async (userId) => {
+  return await Cart.findOneAndUpdate(
+    { user: userId },
+    { items: [] },
+    { new: true }
+  );
 };
 
 module.exports = {
   getCart,
   createCart,
-  createCartItem,
   addCartItem,
+  removeCartItem,
+  clearCart,
 };
