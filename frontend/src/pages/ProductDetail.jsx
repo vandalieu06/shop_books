@@ -4,6 +4,33 @@ import { ArrowLeft, Star, ShoppingCart, Heart, Share2, Check, Truck, Shield, Rot
 import { booksApi } from '../api';
 import { useCart } from '../contexts';
 
+const transformBook = (book) => {
+	if (!book) return book;
+	const getName = (item) => {
+		if (typeof item === 'string') return item;
+		if (item && typeof item === 'object' && item.name) return item.name;
+		return String(item);
+	};
+	const getString = (val) => {
+		if (val == null) return '';
+		if (typeof val === 'string') return val;
+		if (typeof val === 'number') return String(val);
+		if (Array.isArray(val)) return val.map(getName).join(', ');
+		if (typeof val === 'object' && val.name) return val.name;
+		return String(val);
+	};
+	return {
+		...book,
+		authors: Array.isArray(book.authors) ? book.authors.map(getName) : [],
+		category: getName(book.categories?.[0]) || getName(book.category) || '',
+		categories: undefined,
+		publisher: getString(book.publisher),
+		language: getString(book.language),
+		type_book: getString(book.type_book),
+		image: book.image || `https://images.placeholders.dev/?width=400&height=600&text=${encodeURIComponent(book.name || 'Book')}`,
+	};
+};
+
 const ProductDetail = () => {
 	const { isbn } = useParams();
 	const navigate = useNavigate();
@@ -23,7 +50,7 @@ const ProductDetail = () => {
 			try {
 				const response = await booksApi.getById(isbn);
 				if (response.status === 'success') {
-					setProduct(response.data);
+					setProduct(transformBook(response.data));
 				} else {
 					throw new Error(response.message || 'Producto no encontrado');
 				}
