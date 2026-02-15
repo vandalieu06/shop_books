@@ -1,19 +1,14 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { useState } from 'react';
+import { useLocalStorage } from '../hooks/useLocalStorage';
+import { CartContext } from './cartHooks';
 
-const CartContext = createContext();
+const CART_STORAGE_KEY = 'akira_cart';
 
 export const CartProvider = ({ children }) => {
 	const [isCartOpen, setIsCartOpen] = useState(false);
-	const [cartItems, setCartItems] = useState(() => {
-		const saved = localStorage.getItem("akira_cart");
-		return saved ? JSON.parse(saved) : [];
-	});
+	const [cartItems, setCartItems] = useLocalStorage(CART_STORAGE_KEY, []);
 
-	useEffect(() => {
-		localStorage.setItem("akira_cart", JSON.stringify(cartItems));
-	}, [cartItems]);
-
-	const addToCart = (book) => {
+	const addToCart = (book, openCart = true) => {
 		setCartItems((prev) => {
 			const existing = prev.find((item) => item.id === book.isbn);
 			if (existing) {
@@ -30,11 +25,13 @@ export const CartProvider = ({ children }) => {
 					title: book.name,
 					price: book.price,
 					quantity: 1,
-					image: `https://images.placeholders.dev/?width=400&height=600&text=${book.name}`,
+					image: book.image || `https://images.placeholders.dev/?width=400&height=600&text=${encodeURIComponent(book.name)}`,
 				},
 			];
 		});
-		setIsCartOpen(true);
+		if (openCart) {
+			setIsCartOpen(true);
+		}
 	};
 
 	const updateQuantity = (id, delta) => {
@@ -66,5 +63,4 @@ export const CartProvider = ({ children }) => {
 	);
 };
 
-// Hook personalizado para usar el carrito fácilmente
-export const useCart = () => useContext(CartContext);
+export default CartContext;

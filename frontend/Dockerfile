@@ -6,5 +6,5 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install
 COPY . .
-EXPOSE 5173
+EXPOSE 8080
 CMD ["pnpm", "run", "dev", "--host"]

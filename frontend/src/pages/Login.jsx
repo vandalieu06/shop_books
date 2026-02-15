@@ -1,33 +1,50 @@
-import { BookOpen, Mail, Lock } from "lucide-react";
-import { useState } from "react";
+import { BookOpen, Mail, Lock, Loader2 } from 'lucide-react';
+import { useState } from 'react';
+import { useAuth } from '../contexts';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Login() {
+	const { login } = useAuth();
+	const navigate = useNavigate();
 	const [formData, setFormData] = useState({
-		email: "",
-		password: "",
+		email: '',
+		password: '',
 		rememberMe: false,
 	});
+	const [error, setError] = useState('');
+	const [loading, setLoading] = useState(false);
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
-		console.log("Login attempt:", formData);
-		// Aquí iría la lógica de autenticación
+		setError('');
+		setLoading(true);
+
+		try {
+			const result = await login(formData.email, formData.password);
+			if (result.success) {
+				navigate('/');
+			} else {
+				setError(result.error || 'Error al iniciar sesión');
+			}
+		} catch (err) {
+			setError(err.message || 'Error al iniciar sesión');
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	const handleChange = (e) => {
 		const { name, value, type, checked } = e.target;
 		setFormData((prev) => ({
 			...prev,
-			[name]: type === "checkbox" ? checked : value,
+			[name]: type === 'checkbox' ? checked : value,
 		}));
 	};
 
 	return (
 		<section className="min-h-screen bg-linear-to-br from-amber-50 via-orange-50 to-amber-100 px-6 py-12 flex items-center justify-center">
 			<div className="w-full max-w-md">
-				{/* Card Container */}
 				<div className="bg-white rounded-2xl shadow-2xl p-8 space-y-8">
-					{/* Header */}
 					<div className="text-center">
 						<div className="flex justify-center mb-4">
 							<div className="bg-linear-to-br from-amber-500 to-orange-600 p-4 rounded-2xl shadow-lg">
@@ -37,12 +54,16 @@ export default function Login() {
 						<h2 className="text-3xl font-bold text-gray-900 mb-2">
 							Bienvenido de nuevo
 						</h2>
-						<p className="text-gray-600">Inicia sesión en LibroMundo</p>
+						<p className="text-gray-600">Inicia sesión en AkiraShop</p>
 					</div>
 
-					{/* Form */}
-					<div className="space-y-6">
-						{/* Email Input */}
+					{error && (
+						<div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
+							{error}
+						</div>
+					)}
+
+					<form onSubmit={handleSubmit} className="space-y-6">
 						<div>
 							<label
 								htmlFor="email"
@@ -68,7 +89,6 @@ export default function Login() {
 							</div>
 						</div>
 
-						{/* Password Input */}
 						<div>
 							<div className="flex items-center justify-between mb-2">
 								<label
@@ -78,9 +98,8 @@ export default function Login() {
 									Contraseña
 								</label>
 								<button
-									onClick={() => console.log("Forgot password")}
-									className="text-sm font-medium text-amber-600 hover:text-amber-700 transition"
 									type="button"
+									className="text-sm font-medium text-amber-600 hover:text-amber-700 transition"
 								>
 									¿Olvidaste tu contraseña?
 								</button>
@@ -103,43 +122,45 @@ export default function Login() {
 							</div>
 						</div>
 
-						{/* Submit Button */}
 						<button
-							onClick={handleSubmit}
-							type="button"
-							className="w-full bg-linear-to-r from-amber-500 to-orange-600 text-white font-semibold py-3 px-4 rounded-lg hover:from-amber-600 hover:to-orange-700 focus:outline-none focus:ring-4 focus:ring-amber-300 transition duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+							type="submit"
+							disabled={loading}
+							className="w-full bg-linear-to-r from-amber-500 to-orange-600 text-white font-semibold py-3 px-4 rounded-lg hover:from-amber-600 hover:to-orange-700 focus:outline-none focus:ring-4 focus:ring-amber-300 transition duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
 						>
-							Iniciar Sesión
+							{loading ? (
+								<>
+									<Loader2 className="w-5 h-5 animate-spin" />
+									Iniciando sesión...
+								</>
+							) : (
+								'Iniciar Sesión'
+							)}
 						</button>
-					</div>
+					</form>
 
-					{/* Sign Up Link */}
 					<p className="text-center text-sm text-gray-600">
-						¿No tienes cuenta?{" "}
-						<a
-							href="/register"
+						¿No tienes cuenta?{' '}
+						<Link
+							to="/register"
 							className="font-semibold text-amber-600 hover:text-amber-700 transition"
 						>
 							Regístrate gratis
-						</a>
+						</Link>
 					</p>
 				</div>
 
-				{/* Footer Text */}
 				<p className="mt-8 text-center text-xs text-gray-500">
-					Al continuar, aceptas nuestros{" "}
+					Al continuar, aceptas nuestros{' '}
 					<button
-						onClick={() => console.log("Terms")}
-						className="text-amber-600 hover:text-amber-700"
 						type="button"
+						className="text-amber-600 hover:text-amber-700"
 					>
 						Términos de Servicio
-					</button>{" "}
-					y{" "}
+					</button>{' '}
+					y{' '}
 					<button
-						onClick={() => console.log("Privacy")}
-						className="text-amber-600 hover:text-amber-700"
 						type="button"
+						className="text-amber-600 hover:text-amber-700"
 					>
 						Política de Privacidad
 					</button>

@@ -7,13 +7,23 @@ import {
 	ShoppingCart,
 	Trash2,
 	X,
-} from "lucide-react";
-import { useMemo, useState } from "react";
-import { useCart } from "../../contexts/CartContext";
+	User,
+	LogOut,
+	Heart,
+	Package,
+} from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { useCart } from '../../contexts';
+import { useAuth } from '../../contexts/authHooks';
+import { Link } from 'react-router-dom';
 
-const NAV_PAGES = ["inicio", "categorías", "bestsellers", "ofertas"];
+const NAV_PAGES = [
+	{ name: 'inicio', path: '/' },
+	{ name: 'catálogo', path: '/products' },
+	{ name: 'bestsellers', path: '/products?sort=stock' },
+	{ name: 'ofertas', path: '/products?category=ofertas' },
+];
 
-// --- Sub-componente: Item individual del carrito ---
 const CartItem = ({ item, onUpdateQuantity, onRemove }) => (
 	<div className="flex gap-4 p-3 bg-white border border-gray-100 rounded-xl hover:shadow-md transition-shadow">
 		<img
@@ -62,13 +72,98 @@ const CartItem = ({ item, onUpdateQuantity, onRemove }) => (
 	</div>
 );
 
-// --- Componente Header Principal ---
+const UserMenu = () => {
+	const { user, logout, isAuthenticated } = useAuth();
+	const [isOpen, setIsOpen] = useState(false);
+
+	if (!isAuthenticated) {
+		return (
+			<Link
+				to="/login"
+				className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-amber-600 transition-colors"
+			>
+				<User className="w-5 h-5" />
+				<span className="hidden sm:inline font-medium">Iniciar sesión</span>
+			</Link>
+		);
+	}
+
+	return (
+		<div className="relative">
+			<button
+				type="button"
+				onClick={() => setIsOpen(!isOpen)}
+				className="flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-amber-600 transition-colors"
+			>
+				<div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center">
+					{user?.avatar ? (
+						<img
+							src={user.avatar}
+							alt={user.first_name}
+							className="w-8 h-8 rounded-full object-cover"
+						/>
+					) : (
+						<User className="w-4 h-4 text-amber-600" />
+					)}
+				</div>
+				<span className="hidden md:inline font-medium capitalize">
+					{user?.first_name || 'Usuario'}
+				</span>
+			</button>
+
+			{isOpen && (
+				<>
+					<div
+						className="fixed inset-0 z-10"
+						onClick={() => setIsOpen(false)}
+					/>
+					<div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-20">
+						<div className="px-4 py-2 border-b border-gray-100">
+							<p className="font-bold text-gray-900 truncate">
+								{user?.first_name} {user?.last_name}
+							</p>
+							<p className="text-sm text-gray-500 truncate">{user?.email}</p>
+						</div>
+						<Link
+							to="/wishlist"
+							className="flex items-center gap-3 px-4 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-amber-600 transition-colors"
+							onClick={() => setIsOpen(false)}
+						>
+							<Heart className="w-4 h-4" />
+							<span>Mi Wishlist</span>
+						</Link>
+						<Link
+							to="/orders"
+							className="flex items-center gap-3 px-4 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-amber-600 transition-colors"
+							onClick={() => setIsOpen(false)}
+						>
+							<Package className="w-4 h-4" />
+							<span>Mis Pedidos</span>
+						</Link>
+						<hr className="my-2 border-gray-100" />
+						<button
+							type="button"
+							onClick={() => {
+								logout();
+								setIsOpen(false);
+							}}
+							className="flex items-center gap-3 w-full px-4 py-2.5 text-red-500 hover:bg-red-50 transition-colors"
+						>
+							<LogOut className="w-4 h-4" />
+							<span>Cerrar sesión</span>
+						</button>
+					</div>
+				</>
+			)}
+		</div>
+	);
+};
+
 export default function Header() {
 	const { cartItems, isCartOpen, setIsCartOpen, updateQuantity, removeItem } =
 		useCart();
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-	// Cálculos derivados de las props
 	const cartCount = useMemo(
 		() => cartItems.reduce((acc, item) => acc + item.quantity, 0),
 		[cartItems],
@@ -84,7 +179,6 @@ export default function Header() {
 			<header className="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-50 w-full border-b border-gray-100">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="flex items-center justify-between h-16 sm:h-20">
-						{/* Logo y Menú Móvil */}
 						<div className="flex items-center gap-2">
 							<button
 								type="button"
@@ -94,29 +188,29 @@ export default function Header() {
 								<Menu className="w-6 h-6" />
 							</button>
 							<div className="flex items-center space-x-2 group cursor-pointer">
-								<div className="bg-amber-600 p-1.5 rounded-lg group-hover:rotate-6 transition-transform">
-									<BookOpen className="w-5 h-5 text-white" />
-								</div>
-								<span className="text-lg sm:text-xl font-black tracking-tighter text-gray-900 uppercase">
-									Akira<span className="text-amber-600">Shop</span>
-								</span>
+								<Link to="/" className="flex items-center space-x-2 group">
+									<div className="bg-amber-600 p-1.5 rounded-lg group-hover:rotate-6 transition-transform">
+										<BookOpen className="w-5 h-5 text-white" />
+									</div>
+									<span className="text-lg sm:text-xl font-black tracking-tighter text-gray-900 uppercase">
+										Akira<span className="text-amber-600">Shop</span>
+									</span>
+								</Link>
 							</div>
 						</div>
 
-						{/* Navegación Desktop */}
 						<nav className="hidden md:flex items-center space-x-8">
 							{NAV_PAGES.map((p) => (
-								<a
-									key={p}
-									href={`#${p}`}
+								<Link
+									key={p.name}
+									to={p.path}
 									className="text-gray-600 hover:text-amber-600 font-medium transition-colors capitalize"
 								>
-									{p}
-								</a>
+									{p.name}
+								</Link>
 							))}
 						</nav>
 
-						{/* Acciones */}
 						<div className="flex items-center space-x-1 sm:space-x-4">
 							<button
 								type="button"
@@ -124,15 +218,14 @@ export default function Header() {
 							>
 								<Search className="w-5 h-5" />
 							</button>
+							<UserMenu />
 							<button
 								type="button"
 								onClick={() => setIsCartOpen(true)}
 								className="group relative flex items-center bg-gray-900 hover:bg-amber-600 text-white px-3 sm:px-4 py-2 rounded-full transition-all shadow-md"
 							>
 								<ShoppingCart className="w-4 h-4 mr-2" />
-								<span className="text-xs sm:text-sm font-bold">
-									{cartCount}
-								</span>
+								<span className="text-xs sm:text-sm font-bold">{cartCount}</span>
 								{cartCount > 0 && (
 									<span className="ml-2 pl-2 border-l border-white/20 text-xs hidden lg:inline">
 										{totalPrice.toFixed(2)}€
@@ -143,34 +236,32 @@ export default function Header() {
 					</div>
 				</div>
 
-				{/* Menú Móvil Desplegable */}
 				{isMenuOpen && (
 					<div className="md:hidden bg-white border-t border-gray-100 p-4 space-y-4 shadow-xl">
 						{NAV_PAGES.map((p) => (
-							<a
-								key={p}
-								href={`#${p}`}
+							<Link
+								key={p.name}
+								to={p.path}
+								onClick={() => setIsMenuOpen(false)}
 								className="block text-gray-700 font-bold capitalize px-2 py-1"
 							>
-								{p}
-							</a>
+								{p.name}
+							</Link>
 						))}
 					</div>
 				)}
 			</header>
 
-			{/* --- CARRITO LATERAL (Drawer) --- */}
 			<div
-				className={`fixed inset-0 z-[100] transition-all duration-300 ${isCartOpen ? "visible" : "invisible"}`}
+				className={`fixed inset-0 z-[100] transition-all duration-300 ${isCartOpen ? 'visible' : 'invisible'}`}
 			>
-				{/* Overlay */}
 				<div
-					className={`absolute inset-0 bg-gray-900/40 backdrop-blur-sm transition-opacity duration-300 ${isCartOpen ? "opacity-100" : "opacity-0"}`}
+					className={`absolute inset-0 bg-gray-900/40 backdrop-blur-sm transition-opacity duration-300 ${isCartOpen ? 'opacity-100' : 'opacity-0'}`}
 					onClick={() => setIsCartOpen(false)}
 				/>
 
 				<div
-					className={`absolute inset-y-0 right-0 w-full max-w-sm bg-white shadow-2xl transform transition-transform duration-300 ease-out flex flex-col ${isCartOpen ? "translate-x-0" : "translate-x-full"}`}
+					className={`absolute inset-y-0 right-0 w-full max-w-sm bg-white shadow-2xl transform transition-transform duration-300 ease-out flex flex-col ${isCartOpen ? 'translate-x-0' : 'translate-x-full'}`}
 				>
 					<div className="flex items-center justify-between p-5 border-b border-gray-100">
 						<h2 className="text-lg font-black text-gray-900 flex items-center gap-2">
