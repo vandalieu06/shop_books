@@ -4,7 +4,9 @@ const getBook = async (req, res) => {
 	try {
 		const book = await bookService.getBook(req.params.isbn);
 		if (!book) {
-			return res.status(404).json({ status: "error", message: "Libro no encontrado" });
+			return res
+				.status(404)
+				.json({ status: "error", message: "Libro no encontrado" });
 		}
 		res.status(200).json({ status: "success", data: book });
 	} catch (error) {
@@ -22,11 +24,17 @@ const getAllBooks = async (req, res) => {
 			minPrice: req.query.minPrice ? parseFloat(req.query.minPrice) : undefined,
 			maxPrice: req.query.maxPrice ? parseFloat(req.query.maxPrice) : undefined,
 			search: req.query.search,
-			featured: req.query.featured === 'true'
+			featured: req.query.featured === "true",
 		};
 
 		const result = await bookService.getAllBooks(page, limit, filters);
-		res.status(200).json({ status: "success", data: result.data, pagination: result.pagination });
+		res
+			.status(200)
+			.json({
+				status: "success",
+				data: result.data,
+				pagination: result.pagination,
+			});
 	} catch (error) {
 		res.status(400).json({ status: "error", message: error.message });
 	}
@@ -36,10 +44,22 @@ const searchBooks = async (req, res) => {
 	try {
 		const { q, page = 1, limit = 20 } = req.query;
 		if (!q || q.trim().length < 2) {
-			return res.status(400).json({ status: "error", message: "Query de búsqueda muy corta" });
+			return res
+				.status(400)
+				.json({ status: "error", message: "Query de búsqueda muy corta" });
 		}
-		const result = await bookService.searchBooks(q, parseInt(page), parseInt(limit));
-		res.status(200).json({ status: "success", data: result.data, pagination: result.pagination });
+		const result = await bookService.searchBooks(
+			q,
+			parseInt(page),
+			parseInt(limit),
+		);
+		res
+			.status(200)
+			.json({
+				status: "success",
+				data: result.data,
+				pagination: result.pagination,
+			});
 	} catch (error) {
 		res.status(400).json({ status: "error", message: error.message });
 	}
@@ -68,7 +88,9 @@ const updateBook = async (req, res) => {
 	try {
 		const book = await bookService.updateBook(req.params.isbn, req.body);
 		if (!book) {
-			return res.status(404).json({ status: "error", message: "Libro no encontrado" });
+			return res
+				.status(404)
+				.json({ status: "error", message: "Libro no encontrado" });
 		}
 		res.status(200).json({ status: "success", data: book });
 	} catch (error) {
@@ -80,7 +102,9 @@ const deleteBook = async (req, res) => {
 	try {
 		const book = await bookService.deleteBook(req.params.isbn);
 		if (!book) {
-			return res.status(404).json({ status: "error", message: "Libro no encontrado" });
+			return res
+				.status(404)
+				.json({ status: "error", message: "Libro no encontrado" });
 		}
 		res.status(200).json({ status: "success", message: "Libro eliminado" });
 	} catch (error) {

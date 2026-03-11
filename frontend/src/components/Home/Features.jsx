@@ -3,41 +3,31 @@ import { Package, Shield, Truck } from "lucide-react";
 const typeFeatures = [
 	{
 		id: 1,
-		icon: <Truck className="w-8 h-8 text-amber-600" />,
-		title: "Envío Gratis",
-		description: "En pedidos superiores a €25",
+		icon: <Truck className="w-5 h-5" />,
+		title: "Free Shipping",
+		description: "On orders over €25",
 	},
 	{
 		id: 2,
-		icon: <Package className="w-8 h-8 text-blue-600" />,
-		title: "Devoluciones Fáciles",
-		description: "30 días para devoluciones",
+		icon: <Package className="w-5 h-5" />,
+		title: "Easy Returns",
+		description: "30-day return policy",
 	},
 	{
 		id: 3,
-		icon: <Shield className="w-8 h-8 text-green-600" />,
-		title: "Pago Seguro",
-		description: "Pago seguro con tarjeta de crédito",
+		icon: <Shield className="w-5 h-5" />,
+		title: "Secure Payment",
+		description: "SSL encrypted checkout",
 	},
 ];
 
-const FeatureBoxElement = ({ id, icon, title, description }) => {
-	const typeBg = {
-		1: "bg-amber-100",
-		2: "bg-blue-100",
-		3: "bg-green-100",
-	};
+const FeatureBoxElement = ({ icon, title, description }) => {
 	return (
-		<div
-			id={`feature-${id}`}
-			className="flex items-center gap-4 p-6 rounded-lg hover:bg-gray-50 transition"
-		>
-			<div className={`${typeBg[id]} bg-amber-100 p-3 rounded-full`}>
-				{icon}
-			</div>
+		<div className="flex items-center gap-4 py-6 border-b border-gray-100 last:border-b-0">
+			<div className="text-gray-400">{icon}</div>
 			<div>
-				<h3 className="font-semibold text-lg">{title}</h3>
-				<p className="text-gray-600 text-sm">{description}</p>
+				<h3 className="font-medium text-gray-900 text-sm">{title}</h3>
+				<p className="text-gray-500 text-xs">{description}</p>
 			</div>
 		</div>
 	);
@@ -45,13 +35,12 @@ const FeatureBoxElement = ({ id, icon, title, description }) => {
 
 const Features = () => {
 	return (
-		<section className="py-12 bg-white">
+		<section className="py-8 bg-white border-y border-gray-100">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+				<div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-100">
 					{typeFeatures.map((item) => (
 						<FeatureBoxElement
 							key={item.id}
-							id={item.id}
 							icon={item.icon}
 							title={item.title}
 							description={item.description}

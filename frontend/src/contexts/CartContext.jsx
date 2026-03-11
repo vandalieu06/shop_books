@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { useLocalStorage } from '../hooks/useLocalStorage';
-import { CartContext } from './cartHooks';
+import { useState } from "react";
+import { useLocalStorage } from "../hooks/useLocalStorage";
+import { CartContext } from "./cartHooks";
 
-const CART_STORAGE_KEY = 'akira_cart';
+const CART_STORAGE_KEY = "akira_cart";
 
 export const CartProvider = ({ children }) => {
 	const [isCartOpen, setIsCartOpen] = useState(false);
@@ -25,7 +25,9 @@ export const CartProvider = ({ children }) => {
 					title: book.name,
 					price: book.price,
 					quantity: 1,
-					image: book.image || `https://images.placeholders.dev/?width=400&height=600&text=${encodeURIComponent(book.name)}`,
+					image:
+						book.image ||
+						`https://images.placeholders.dev/?width=400&height=600&text=${encodeURIComponent(book.name)}`,
 				},
 			];
 		});

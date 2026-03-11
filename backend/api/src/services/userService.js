@@ -3,7 +3,7 @@ const jsonwebtoken = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
 const getAllUsers = async () => {
-	return await User.find(); // El esquema ya oculta el password por defecto
+	return await User.find();
 };
 
 const getUserById = async (id) => {
@@ -24,7 +24,6 @@ const createUser = async (userData) => {
 };
 
 const login = async (email, password) => {
-	// Forzamos la selección del password ya que tiene 'select: false'
 	const user = await User.findOne({ email }).select("+password");
 
 	if (!user || !(await bcrypt.compare(password, user.password))) {
@@ -54,7 +53,7 @@ const register = async (userData) => {
 	if (existingUser) {
 		throw new Error("El email ya está registrado");
 	}
-	
+
 	const user = new User(userData);
 	await user.save();
 
@@ -98,9 +97,13 @@ const getCurrentUser = async (userId) => {
 
 const rotateRefreshToken = async (oldRefreshToken) => {
 	try {
-		const decoded = jsonwebtoken.verify(oldRefreshToken, process.env.JWT_REFRESH_KEY);
+		const decoded = jsonwebtoken.verify(
+			oldRefreshToken,
+			process.env.JWT_REFRESH_KEY,
+		);
+
 		const user = await User.findById(decoded.id).select("+refreshToken");
-		
+
 		if (!user || user.refreshToken !== oldRefreshToken) {
 			throw new Error("Token inválido");
 		}
@@ -130,13 +133,13 @@ const rotateRefreshToken = async (oldRefreshToken) => {
 	}
 };
 
-module.exports = { 
-	getAllUsers, 
-	getUserById, 
-	createUser, 
-	login, 
-	register, 
-	logout, 
+module.exports = {
+	getAllUsers,
+	getUserById,
+	createUser,
+	login,
+	register,
+	logout,
 	getCurrentUser,
-	rotateRefreshToken 
+	rotateRefreshToken,
 };
