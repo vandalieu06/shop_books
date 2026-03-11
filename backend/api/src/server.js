@@ -16,37 +16,16 @@ const orderRoutes = require("./routes/orderRouter.js");
 const reviewRoutes = require("./routes/reviewRouter.js");
 const wishlistRoutes = require("./routes/wishlistRouter.js");
 
-// Temporal View Routes Files + package
-// const exphbs = require("express-handlebars");
-// const bookViewRoutes = require("./routes/pages/bookViewRouter.js");
-// const userViewRoutes = require("./routes/pages/userViewRoute.js");
-
 // Variables globales
 const PORT = process.env.PORT || 3000;
 const app = express();
 
-// Cors
-app.use(cors());
-
-// Config Handlebars
-// app.set("views", path.join(__dirname, "views"));
-// app.engine(
-// 	"hbs",
-// 	exphbs.engine({
-// 		defaultLayout: "main",
-// 		extname: ".hbs",
-// 		runtimeOptions: {
-// 			allowProtoPropertiesByDefault: true,
-// 			allowProtoMethodsByDefault: true,
-// 		},
-// 	}),
-// );
-// app.set("view engine", "hbs");
-
 // Basic Config
+app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// Seeds
 const runSeedIfNeeded = async () => {
 	try {
 		const bookCount = await Book.countDocuments();
@@ -75,9 +54,5 @@ app.use("/api/publishers", publisherRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/wishlist", wishlistRoutes);
-
-// Temporal View Routes
-// app.use("/books", bookViewRoutes);
-// app.use("/users", userViewRoutes);
 
 app.listen(PORT, () => console.log(`Servidor escoltant al port ${PORT}`));
