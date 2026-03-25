@@ -16,6 +16,10 @@ const orderRoutes = require("./routes/orderRouter.js");
 const reviewRoutes = require("./routes/reviewRouter.js");
 const wishlistRoutes = require("./routes/wishlistRouter.js");
 
+//Swagger Api Docs
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./docs/swagger");
+
 // Variables globales
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -24,21 +28,36 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, {
+    swaggerOptions: {
+      persistAuthorization: false,
+      security: [
+        {
+          bearerAuth: [],
+        },
+      ],
+    },
+    customSiteTitle: "E-commerce API Docs",
+  }),
+);
 
 // Seeds
 const runSeedIfNeeded = async () => {
-	try {
-		const bookCount = await Book.countDocuments();
-		if (bookCount === 0) {
-			console.log("Base de datos vacía. Ejecutando seed...");
-			const seed = require("./utils/seed.js");
-			await seed.seedDatabase();
-		} else {
-			console.log(`Base de datos ya tiene ${bookCount} libros. Seed omitido.`);
-		}
-	} catch (error) {
-		console.error("Error al verificar seed:", error.message);
-	}
+  try {
+    const bookCount = await Book.countDocuments();
+    if (bookCount === 0) {
+      console.log("Base de datos vacía. Ejecutando seed...");
+      const seed = require("./utils/seed.js");
+      await seed.seedDatabase();
+    } else {
+      console.log(`Base de datos ya tiene ${bookCount} libros. Seed omitido.`);
+    }
+  } catch (error) {
+    console.error("Error al verificar seed:", error.message);
+  }
 };
 
 connectDB().then(() => runSeedIfNeeded());
