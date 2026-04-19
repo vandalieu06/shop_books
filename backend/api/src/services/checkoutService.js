@@ -8,13 +8,21 @@ const createCheckoutSession = async (items, userId) => {
 		items.map(async (item) => {
 			let book;
 			if (!item.book.match(/^[0-9a-fA-F]{24}$/)) {
-				book = await Book.findOne({ isbn: item.book });
+				book = await Book.findOne({ isbn: item.book, isActive: true });
 			} else {
 				book = await Book.findById(item.book);
 			}
 
 			if (!book) {
-				throw new Error(`Book not found: ${item.book}`);
+				throw new Error(`Producto no encontrado: ${item.book}`);
+			}
+
+			if (book.type_book === "fisico" && book.unit_stock < item.quantity) {
+				throw new Error(`Stock insuficiente para "${book.name}". Stock disponible: ${book.unit_stock}`);
+			}
+
+			if (!book.price || book.price <= 0) {
+				throw new Error(`Precio inválido para "${book.name}"`);
 			}
 
 			return {
