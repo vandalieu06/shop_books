@@ -1,51 +1,43 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { loadStripe } from "@stripe/stripe-js";
-import { MapPin, Trash2, ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, CreditCard, Lock, Loader2 } from "lucide-react";
 import { useCart } from "../contexts";
 import { checkoutApi } from "../api";
 
 const STRIPE_PUBLIC_KEY = import.meta.env.VITE_STRIPE_PUBLIC_KEY || "pk_test_51TNws61qVP8Um7ZMcRIQcWEQyCcu0HHaxNNwvE9bZe5pkNI8dMsKzHI4D1aLMiHrO1sfG5RNETKbsvMbvAfF5AEe00zoWNPbig";
+
 const stripePromise = loadStripe(STRIPE_PUBLIC_KEY);
 
-const Checkout = () => {
-	const { cartItems, removeItem } = useCart();
+const CheckoutPayment = () => {
+	const location = useLocation();
 	const navigate = useNavigate();
+	const { clearCart } = useCart();
 
-	const [shippingAddress, setShippingAddress] = useState({
-		street: "",
-		city: "",
-		zipcode: "",
-		country: "",
-	});
-	const [loading, setLoading] = useState(false);
+	const { cartItems, shippingAddress, total } = location.state || {};
+	const [processing, setProcessing] = useState(false);
 	const [error, setError] = useState(null);
 
-	const total = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-
-	if (cartItems.length === 0) {
+	if (!cartItems || cartItems.length === 0) {
 		return (
 			<div className="min-h-screen bg-white flex items-center justify-center">
 				<div className="text-center p-8">
 					<h2 className="text-lg font-semibold text-gray-900 mb-2">
-						Your cart is empty
+						No order data
 					</h2>
-					<p className="text-gray-500 text-sm mb-4">
-						Add some books before checking out
-					</p>
 					<button
-						onClick={() => navigate("/products")}
+						onClick={() => navigate("/cart")}
 						className="px-5 py-2 bg-red-700 text-white text-sm font-medium hover:bg-red-800 transition-colors"
 					>
-						Browse catalog
+						Go to cart
 					</button>
 				</div>
 			</div>
 		);
 	}
 
-	const handleProceedToPayment = async () => {
-		setLoading(true);
+	const handlePayment = async () => {
+		setProcessing(true);
 		setError(null);
 
 		try {
@@ -55,25 +47,36 @@ const Checkout = () => {
 			}));
 
 			const response = await checkoutApi.createSession(items);
-			const { url } = response.data;
+			const { sessionId, url } = response.data;
 
 			if (url) {
 				window.location.href = url;
-			} else {
-				const stripe = await stripePromise;
-				const { sessionId } = response.data;
-				await stripe.redirectToCheckout({ sessionId });
+				return;
 			}
+
+			const stripe = await stripePromise;
+			await stripe.redirectToCheckout({ sessionId });
 		} catch (err) {
 			const data = err.response?.data;
-			let message = "Failed to create checkout session.";
+			let message = "Payment failed. Please try again.";
 			if (data?.message) {
-				message = data.message;
+				try {
+					const parsed = JSON.parse(data.message);
+					message = parsed.map((e) => e.message).join(", ");
+				} catch {
+					message = data.message;
+				}
+			} else {
+				message = err.message;
 			}
 			setError(message);
 		} finally {
-			setLoading(false);
+			setProcessing(false);
 		}
+	};
+
+	const handleCancel = () => {
+		navigate("/checkout");
 	};
 
 	return (
@@ -81,13 +84,13 @@ const Checkout = () => {
 			<div className="bg-gray-50 border-b border-gray-200">
 				<div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 					<button
-						onClick={() => navigate(-1)}
+						onClick={handleCancel}
 						className="flex items-center gap-2 text-gray-500 hover:text-gray-700 text-sm mb-2"
 					>
 						<ArrowLeft className="w-4 h-4" />
 						Back
 					</button>
-					<h1 className="text-2xl font-semibold text-gray-900">Checkout</h1>
+					<h1 className="text-2xl font-semibold text-gray-900">Payment</h1>
 				</div>
 			</div>
 
@@ -95,88 +98,67 @@ const Checkout = () => {
 				<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 					<div className="lg:col-span-2">
 						<div className="bg-white border border-gray-200 p-6">
-								<h2 className="text-base font-semibold text-gray-900 flex items-center gap-2 mb-4">
-									<MapPin className="w-4 h-4 text-red-700" />
-									Shipping address
-								</h2>
+							<h2 className="text-base font-semibold text-gray-900 flex items-center gap-2 mb-4">
+								<CreditCard className="w-4 h-4 text-red-700" />
+								Payment details
+							</h2>
 
-								{error && (
-									<div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-sm">
-										{error}
-									</div>
-								)}
+							{error && (
+								<div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-sm">
+									{error}
+								</div>
+							)}
 
-								<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-									<div className="sm:col-span-2">
+							<div className="space-y-4">
+								<div>
+									<label className="block text-xs font-medium text-gray-500 mb-1">
+										Card number
+									</label>
+									<input
+										type="text"
+										placeholder="1234 5678 9012 3456"
+										className="w-full px-3 py-2 border border-gray-200 text-sm focus:outline-none focus:border-red-700"
+									/>
+								</div>
+								<div className="grid grid-cols-2 gap-4">
+									<div>
 										<label className="block text-xs font-medium text-gray-500 mb-1">
-											Street address
+											Expiry date
 										</label>
 										<input
 											type="text"
-											required
-											value={shippingAddress.street}
-											onChange={(e) =>
-												setShippingAddress({
-													...shippingAddress,
-													street: e.target.value,
-												})
-											}
+											placeholder="MM/YY"
 											className="w-full px-3 py-2 border border-gray-200 text-sm focus:outline-none focus:border-red-700"
 										/>
 									</div>
 									<div>
 										<label className="block text-xs font-medium text-gray-500 mb-1">
-											City
+											CVC
 										</label>
 										<input
 											type="text"
-											required
-											value={shippingAddress.city}
-											onChange={(e) =>
-												setShippingAddress({
-													...shippingAddress,
-													city: e.target.value,
-												})
-											}
-											className="w-full px-3 py-2 border border-gray-200 text-sm focus:outline-none focus:border-red-700"
-										/>
-									</div>
-									<div>
-										<label className="block text-xs font-medium text-gray-500 mb-1">
-											Postal code
-										</label>
-										<input
-											type="text"
-											required
-											value={shippingAddress.zipcode}
-											onChange={(e) =>
-												setShippingAddress({
-													...shippingAddress,
-													zipcode: e.target.value,
-												})
-											}
-											className="w-full px-3 py-2 border border-gray-200 text-sm focus:outline-none focus:border-red-700"
-										/>
-									</div>
-									<div className="sm:col-span-2">
-										<label className="block text-xs font-medium text-gray-500 mb-1">
-											Country
-										</label>
-										<input
-											type="text"
-											required
-											value={shippingAddress.country}
-											onChange={(e) =>
-												setShippingAddress({
-													...shippingAddress,
-													country: e.target.value,
-												})
-											}
+											placeholder="123"
 											className="w-full px-3 py-2 border border-gray-200 text-sm focus:outline-none focus:border-red-700"
 										/>
 									</div>
 								</div>
+								<div>
+									<label className="block text-xs font-medium text-gray-500 mb-1">
+										Cardholder name
+									</label>
+									<input
+										type="text"
+										placeholder="John Doe"
+										className="w-full px-3 py-2 border border-gray-200 text-sm focus:outline-none focus:border-red-700"
+									/>
+								</div>
 							</div>
+
+							<div className="mt-4 flex items-center gap-2 text-xs text-gray-500">
+								<Lock className="w-3 h-3" />
+								<span>Your payment is secure</span>
+							</div>
+						</div>
 					</div>
 
 					<div>
@@ -185,7 +167,7 @@ const Checkout = () => {
 								Order summary
 							</h2>
 
-							<div className="space-y-3 mb-4 max-h-64 overflow-y-auto">
+							<div className="space-y-3 mb-4 max-h-48 overflow-y-auto">
 								{cartItems.map((item) => (
 									<div
 										key={item.id}
@@ -194,26 +176,16 @@ const Checkout = () => {
 										<img
 											src={item.image}
 											alt={item.title}
-											className="w-12 h-16 object-cover"
+											className="w-10 h-14 object-cover"
 										/>
 										<div className="flex-1 min-w-0">
-											<p className="text-sm font-medium text-gray-900 line-clamp-1">
+											<p className="text-xs font-medium text-gray-900 line-clamp-1">
 												{item.title}
 											</p>
 											<p className="text-xs text-gray-500">
 												Qty: {item.quantity}
 											</p>
-											<p className="text-sm font-medium text-gray-900">
-												{(item.price * item.quantity).toFixed(2)}€
-											</p>
 										</div>
-										<button
-											type="button"
-											onClick={() => removeItem(item.id)}
-											className="text-gray-400 hover:text-red-600 p-1"
-										>
-											<Trash2 className="w-3.5 h-3.5" />
-										</button>
 									</div>
 								))}
 							</div>
@@ -235,17 +207,17 @@ const Checkout = () => {
 
 							<button
 								type="button"
-								disabled={loading}
-								onClick={handleProceedToPayment}
+								disabled={processing}
+								onClick={handlePayment}
 								className="w-full mt-4 bg-red-700 hover:bg-red-800 disabled:bg-gray-300 text-white py-3 font-medium transition-colors text-sm flex items-center justify-center gap-2"
 							>
-								{loading ? (
+								{processing ? (
 									<>
 										<Loader2 className="w-4 h-4 animate-spin" />
 										Processing...
 									</>
 								) : (
-									"Proceed to checkout"
+									`Pay ${total.toFixed(2)}€`
 								)}
 							</button>
 						</div>
@@ -256,4 +228,4 @@ const Checkout = () => {
 	);
 };
 
-export default Checkout;
+export default CheckoutPayment;

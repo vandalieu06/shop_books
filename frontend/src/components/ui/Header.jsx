@@ -232,7 +232,7 @@ export default function Header() {
               <UserMenu />
               <button
                 type="button"
-                onClick={() => setIsCartOpen(true)}
+                onClick={() => navigate("/cart")}
                 className="flex items-center bg-red-700 hover:bg-red-800 text-white px-3 py-2 text-sm font-medium transition-colors"
               >
                 <ShoppingCart className="w-4 h-4 mr-1.5" />

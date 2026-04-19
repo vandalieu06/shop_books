@@ -9,10 +9,15 @@ const buildPaginationResponse = async (
 	page = 1,
 	limit = 20,
 	populateOptions = null,
+	sort = null,
 ) => {
 	const { skip, limit: parsedLimit } = paginate(query, page, limit);
 
 	let queryBuilder = model.find(query).skip(skip).limit(parsedLimit);
+
+	if (sort) {
+		queryBuilder = queryBuilder.sort(sort);
+	}
 
 	if (populateOptions) {
 		if (Array.isArray(populateOptions)) {

@@ -36,7 +36,7 @@ const bookSchema = new Schema(
 		language: {
 			type: String,
 			enum: {
-				values: ["es", "en", "jp", "fr", "de", "it", "pt", "zh", "ko", "ru"],
+				values: ["es", "en", "ja", "fr", "de", "it", "pt", "zh", "ko", "ru"],
 				message: "{VALUE} no es un idioma soportado",
 			},
 			default: "es",

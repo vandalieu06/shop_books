@@ -33,7 +33,6 @@ const Home = () => {
         onSearch={handleSearch}
       />
       <ShippingProgress />
-      <DealsSection />
       <TrendingNow />
       <FeaturedBooks onAddToCart={addToCart} />
       <WhyUs />

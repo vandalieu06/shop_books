@@ -8,12 +8,48 @@ const generateOrderCode = () => {
 	return `ORD-${timestamp}-${random}`;
 };
 
+const validateStock = async (items) => {
+	const errors = [];
+	for (const item of items) {
+		let bookId = item.book;
+		if (item.book && !item.book.match(/^[0-9a-fA-F]{24}$/)) {
+			const book = await Book.findOne({ isbn: item.book });
+			if (book) {
+				bookId = book._id;
+			} else {
+				errors.push({ book: item.book, message: "Book not found" });
+				continue;
+			}
+		}
+		const book = await Book.findById(bookId);
+		if (!book) {
+			errors.push({ book: item.book, message: "Book not found" });
+		} else if (book.unit_stock < item.quantity) {
+			errors.push({
+				book: item.book,
+				message: `Insufficient stock. Available: ${book.unit_stock}`,
+			});
+		}
+	}
+	if (errors.length > 0) {
+		throw new Error(JSON.stringify(errors));
+	}
+	return true;
+};
+
 const getAllByUser = async (userId, page = 1, limit = 20) => {
 	const query = { user: userId };
-	return await buildPaginationResponse(Order, query, page, limit, {
-		path: "items.book",
-		select: "name image price",
-	});
+	return await buildPaginationResponse(
+		Order,
+		query,
+		page,
+		limit,
+		{
+			path: "items.book",
+			select: "name image price",
+		},
+		{ createdAt: -1 }
+	);
 };
 
 const getById = async (id, userId = null) => {
@@ -29,11 +65,20 @@ const getById = async (id, userId = null) => {
 
 const create = async (data) => {
 	if (data.items && Array.isArray(data.items)) {
+		await validateStock(data.items);
 		for (const item of data.items) {
 			if (item.book && !item.book.match(/^[0-9a-fA-F]{24}$/)) {
 				const book = await Book.findOne({ isbn: item.book });
 				if (book) {
 					item.book = book._id;
+					item.price = book.price;
+					item.title = book.name;
+				}
+			} else {
+				const book = await Book.findById(item.book);
+				if (book) {
+					item.price = book.price;
+					item.title = book.name;
 				}
 			}
 		}
@@ -76,4 +121,4 @@ const cancelOrder = async (id, userId) => {
 	);
 };
 
-module.exports = { getAllByUser, getById, create, updateStatus, cancelOrder };
+module.exports = { getAllByUser, getById, create, updateStatus, cancelOrder, validateStock, generateOrderCode };

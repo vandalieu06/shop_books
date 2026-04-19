@@ -35,7 +35,7 @@ const bookData = [
 		description:
 			"Novelización de la popular película de animación japonesa. Un joven que se escapa a Tokio conoce a una chica con la habilidad de manipular el clima.",
 		num_pages: 240,
-		language: "jp",
+		language: "es",
 		year_publish: "2019-07-18",
 		type_book: "digital",
 		price: 7.99,

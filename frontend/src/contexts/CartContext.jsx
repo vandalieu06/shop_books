@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { CartContext } from "./cartHooks";
 
@@ -8,7 +8,7 @@ export const CartProvider = ({ children }) => {
 	const [isCartOpen, setIsCartOpen] = useState(false);
 	const [cartItems, setCartItems] = useLocalStorage(CART_STORAGE_KEY, []);
 
-	const addToCart = (book, openCart = true) => {
+	const addToCart = useCallback((book, openCart = true) => {
 		setCartItems((prev) => {
 			const existing = prev.find((item) => item.id === book.isbn);
 			if (existing) {
@@ -34,9 +34,9 @@ export const CartProvider = ({ children }) => {
 		if (openCart) {
 			setIsCartOpen(true);
 		}
-	};
+	}, [setCartItems]);
 
-	const updateQuantity = (id, delta) => {
+	const updateQuantity = useCallback((id, delta) => {
 		setCartItems((prev) =>
 			prev.map((item) =>
 				item.id === id
@@ -44,10 +44,15 @@ export const CartProvider = ({ children }) => {
 					: item,
 			),
 		);
-	};
+	}, [setCartItems]);
 
-	const removeItem = (id) =>
+	const removeItem = useCallback((id) => {
 		setCartItems((prev) => prev.filter((item) => item.id !== id));
+	}, [setCartItems]);
+
+	const clearCart = useCallback(() => {
+		setCartItems([]);
+	}, [setCartItems]);
 
 	return (
 		<CartContext.Provider
@@ -58,6 +63,7 @@ export const CartProvider = ({ children }) => {
 				addToCart,
 				updateQuantity,
 				removeItem,
+				clearCart,
 			}}
 		>
 			{children}

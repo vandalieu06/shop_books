@@ -15,6 +15,7 @@ const publisherRoutes = require("./routes/publisherRouter.js");
 const orderRoutes = require("./routes/orderRouter.js");
 const reviewRoutes = require("./routes/reviewRouter.js");
 const wishlistRoutes = require("./routes/wishlistRouter.js");
+const checkoutRoutes = require("./routes/checkoutRouter.js");
 
 //Swagger Api Docs
 const swaggerUi = require("swagger-ui-express");
@@ -26,6 +27,10 @@ const app = express();
 
 // Basic Config
 app.use(cors());
+app.use(
+  "/api/checkout/webhook",
+  express.raw({ type: "application/json" })
+);
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(
@@ -73,5 +78,6 @@ app.use("/api/publishers", publisherRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/wishlist", wishlistRoutes);
+app.use("/api/checkout", checkoutRoutes);
 
 app.listen(PORT, () => console.log(`Servidor escoltant al port ${PORT}`));

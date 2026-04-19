@@ -7,4 +7,8 @@ export const ordersApi = {
 	cancel: (id) => api.put(`/orders/${id}/cancel`),
 };
 
+export const checkoutApi = {
+	createSession: (items) => api.post("/checkout/create-session", { items }),
+};
+
 export default ordersApi;
