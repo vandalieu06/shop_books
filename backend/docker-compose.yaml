@@ -19,6 +19,8 @@ services:
       - 3000:3000
     depends_on:
       - mongodb
+    env_file:
+      - ./api/.env
     volumes:
       - ./api:/api
     networks:

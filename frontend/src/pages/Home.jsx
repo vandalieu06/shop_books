@@ -1,24 +1,46 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useOutletContext } from "react-router-dom";
-import Categories from "../components/Home/Categories";
-import FeaturedBooks from "../components/Home/FeaturedBooks";
-import Features from "../components/Home/Features";
+
 import Hero from "../components/Home/Hero";
+import TrustBar from "../components/Home/TrustBar";
+import ShippingProgress from "../components/Home/ShippingProgress";
+import DealsSection from "../components/Home/DealsSection";
+import TrendingNow from "../components/Home/TrendingNow";
+import FeaturedBooks from "../components/Home/FeaturedBooks";
+import WhyUs from "../components/Home/WhyUs";
+import CustomerReviews from "../components/Home/CustomerReviews";
 import Newsletter from "../components/Home/Newsletter";
 
 const Home = () => {
-	const [searchQuery, setSearchQuery] = useState("");
-	const { addToCart } = useOutletContext();
+  const [searchQuery, setSearchQuery] = useState("");
+  const { addToCart } = useOutletContext();
+  const navigate = useNavigate();
 
-	return (
-		<>
-			<Hero searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-			<Features />
-			<Categories />
-			<FeaturedBooks onAddToCart={addToCart} />
-			<Newsletter />
-		</>
-	);
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
+  return (
+    <>
+      <TrustBar />
+      <Hero
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        onSearch={handleSearch}
+      />
+      <ShippingProgress />
+      <DealsSection />
+      <TrendingNow />
+      <FeaturedBooks onAddToCart={addToCart} />
+      <WhyUs />
+      <CustomerReviews />
+      <Newsletter />
+    </>
+  );
 };
 
 export default Home;
