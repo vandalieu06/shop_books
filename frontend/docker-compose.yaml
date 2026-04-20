@@ -1,6 +1,8 @@
 services:
   frontend:
-    build: .
+    build:
+      context: .
+      target: dev
     container_name: vite_app
     ports:
       - "8080:5173"
@@ -9,6 +11,9 @@ services:
       - /app/node_modules
     environment:
       - NODE_ENV=development
+      - WATCHPACK_POLLING=true
+    networks:
+      - app_shop_network
 
 networks:
   app_shop_network:

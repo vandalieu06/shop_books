@@ -6,23 +6,33 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
     ports:
-      - 27017:27017
+      - "27017:27017"
     command: --quiet
     volumes:
       - mongodb:/data/db
     networks:
       - app_shop_network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   api:
-    build: ./api
+    build:
+      context: ./api
+      target: dev
+    container_name: backend_api
     ports:
-      - 3000:3000
+      - "3000:3000"
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_healthy
     env_file:
       - ./api/.env
     volumes:
       - ./api:/api
+      - /api/node_modules
     networks:
       - app_shop_network
 
