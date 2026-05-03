@@ -5,6 +5,7 @@ export const usersApi = {
 	getById: (id) => api.get(`/admin/users/${id}`),
 	update: (id, userData) => api.put(`/admin/users/${id}`, userData),
 	delete: (id) => api.delete(`/admin/users/${id}`),
+	updateMe: (userData) => api.put('/users/me', userData),
 };
 
 export default usersApi;
