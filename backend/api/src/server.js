@@ -7,6 +7,7 @@ const Book = require("./models/bookScheme.js");
 
 // API Routes File
 const userRoutes = require("./routes/userRoute.js");
+const adminRoutes = require("./routes/admin/adminRouter.js");
 const bookRoutes = require("./routes/bookRouter.js");
 const authRoutes = require("./routes/authRoute.js");
 const authorRoutes = require("./routes/authorRouter.js");
@@ -70,6 +71,7 @@ connectDB().then(() => runSeedIfNeeded());
 // API Routes
 app.get("/", (_, res) => res.send("API Ecommerce en marxa"));
 app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
 app.use("/api/usuarios", userRoutes);
 app.use("/api/books", bookRoutes);
 app.use("/api/authors", authorRoutes);

@@ -7,6 +7,7 @@ import {
   Package,
   Plus,
   Search,
+  Settings,
   ShoppingCart,
   Trash2,
   User,
@@ -128,21 +129,31 @@ const UserMenu = () => {
             <hr className="my-1 border-gray-100" />
             <nav>
               <Link
-                to="/profile"
+                to="/account"
                 className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-red-700 transition-colors"
                 onClick={() => setIsOpen(false)}
               >
                 <User className="w-3.5 h-3.5" />
-                <span>Perfil</span>
+                <span>Mi Cuenta</span>
               </Link>
               <Link
                 to="/wishlist"
-                className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-red-700 transition-colors"
-                onClick={() => setIsOpen(false)}
-              >
-                <Heart className="w-3.5 h-3.5" />
-                <span>Wishlist</span>
-              </Link>
+                 className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-red-700 transition-colors"
+                 onClick={() => setIsOpen(false)}
+               >
+                 <Heart className="w-3.5 h-3.5" />
+                 <span>Wishlist</span>
+               </Link>
+               {user?.role === "admin" && (
+                 <Link
+                   to="/admin"
+                   className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-red-700 transition-colors"
+                   onClick={() => setIsOpen(false)}
+                 >
+                   <Settings className="w-3.5 h-3.5" />
+                   <span>Admin</span>
+                 </Link>
+               )}
               <Link
                 to="/orders"
                 className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-red-700 transition-colors"

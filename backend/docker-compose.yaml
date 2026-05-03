@@ -36,8 +36,19 @@ services:
     networks:
       - app_shop_network
 
+  cache:
+    image: redis:7.4-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server --save 20 1 --loglevel warning --requirepass admin1234
+    volumes:
+      - cache:/data
+
 volumes:
   mongodb:
+  cache:
+    driver: local
 
 networks:
   app_shop_network:

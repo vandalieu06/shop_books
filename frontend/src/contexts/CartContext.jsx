@@ -36,6 +36,25 @@ export const CartProvider = ({ children }) => {
 		}
 	}, [setCartItems]);
 
+	const addItemsToCart = useCallback((items) => {
+		setCartItems((prev) => {
+			const updated = [...prev];
+			items.forEach((item) => {
+				const existing = updated.findIndex((i) => i.id === item.id);
+				if (existing >= 0) {
+					updated[existing] = {
+						...updated[existing],
+						quantity: updated[existing].quantity + item.quantity,
+					};
+				} else {
+					updated.push(item);
+				}
+			});
+			return updated;
+		});
+		setIsCartOpen(true);
+	}, [setCartItems]);
+
 	const updateQuantity = useCallback((id, delta) => {
 		setCartItems((prev) =>
 			prev.map((item) =>
@@ -61,6 +80,7 @@ export const CartProvider = ({ children }) => {
 				isCartOpen,
 				setIsCartOpen,
 				addToCart,
+				addItemsToCart,
 				updateQuantity,
 				removeItem,
 				clearCart,

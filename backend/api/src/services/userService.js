@@ -31,13 +31,13 @@ const login = async (email, password) => {
 	}
 
 	const accessToken = jsonwebtoken.sign(
-		{ id: user._id, email: user.email },
+		{ id: user._id, email: user.email, role: user.role },
 		process.env.JWT_SECURE_KEY,
 		{ expiresIn: "15m" },
 	);
 
 	const refreshToken = jsonwebtoken.sign(
-		{ id: user._id },
+		{ id: user._id, role: user.role },
 		process.env.JWT_REFRESH_KEY,
 		{ expiresIn: "7d" },
 	);
@@ -58,13 +58,13 @@ const register = async (userData) => {
 	await user.save();
 
 	const accessToken = jsonwebtoken.sign(
-		{ id: user._id, email: user.email },
+		{ id: user._id, email: user.email, role: user.role },
 		process.env.JWT_SECURE_KEY,
 		{ expiresIn: "15m" },
 	);
 
 	const refreshToken = jsonwebtoken.sign(
-		{ id: user._id },
+		{ id: user._id, role: user.role },
 		process.env.JWT_REFRESH_KEY,
 		{ expiresIn: "7d" },
 	);
@@ -109,13 +109,13 @@ const rotateRefreshToken = async (oldRefreshToken) => {
 		}
 
 		const newAccessToken = jsonwebtoken.sign(
-			{ id: user._id, email: user.email },
+			{ id: user._id, email: user.email, role: user.role },
 			process.env.JWT_SECURE_KEY,
 			{ expiresIn: "15m" },
 		);
 
 		const newRefreshToken = jsonwebtoken.sign(
-			{ id: user._id },
+			{ id: user._id, role: user.role },
 			process.env.JWT_REFRESH_KEY,
 			{ expiresIn: "7d" },
 		);

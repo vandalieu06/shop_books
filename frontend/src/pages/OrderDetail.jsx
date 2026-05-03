@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Package, ArrowLeft, MapPin, X } from "lucide-react";
+import { Package, ArrowLeft, MapPin, X, RefreshCw } from "lucide-react";
 import { ordersApi } from "../api";
+import { useCart } from "../contexts";
 
 const statusColors = {
 	Pending: "bg-yellow-100 text-yellow-800",
@@ -14,10 +15,12 @@ const statusColors = {
 const OrderDetail = () => {
 	const { id } = useParams();
 	const navigate = useNavigate();
+	const { addItemsToCart } = useCart();
 	const [order, setOrder] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [cancelling, setCancelling] = useState(false);
+	const [reordering, setReordering] = useState(false);
 
 	useEffect(() => {
 		const fetchOrder = async () => {
@@ -44,6 +47,29 @@ const OrderDetail = () => {
 			alert(err.message || "Failed to cancel order");
 		} finally {
 			setCancelling(false);
+		}
+	};
+
+	const handleReorder = async () => {
+		if (!order?.items?.length) return;
+
+		setReordering(true);
+		try {
+			const cartItems = order.items.map((item) => ({
+				id: item.book?._id || item.book,
+				title: item.title,
+				price: item.price,
+				quantity: item.quantity,
+				image:
+					item.book?.image ||
+					`https://images.placeholders.dev/?width=100&height=150&text=${encodeURIComponent(item.title || "Book")}`,
+			}));
+			addItemsToCart(cartItems);
+			navigate("/cart");
+		} catch (err) {
+			alert(err.message || "Failed to add items to cart");
+		} finally {
+			setReordering(false);
 		}
 	};
 
@@ -217,6 +243,15 @@ const OrderDetail = () => {
 									{cancelling ? "Cancelling..." : "Cancel order"}
 								</button>
 							)}
+
+							<button
+								onClick={handleReorder}
+								disabled={reordering}
+								className="w-full mt-3 px-4 py-2 bg-red-700 text-white text-sm font-medium hover:bg-red-800 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+							>
+								<RefreshCw className={`w-4 h-4 ${reordering ? "animate-spin" : ""}`} />
+								{reordering ? "Adding..." : "Buy again"}
+							</button>
 						</div>
 					</div>
 				</div>
