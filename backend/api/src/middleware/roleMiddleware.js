@@ -1,13 +1,13 @@
 const roleMiddleware = (...roles) => {
-	return (req, res, next) => {
-		if (!req.user || !roles.includes(req.user.role)) {
-			return res.status(403).json({
-				status: "error",
-				message: "Accés prohibit",
-			});
-		}
-		next();
-	};
+  return (req, res, next) => {
+    if (!req.user || !roles.includes(req.user.role)) {
+      return res.status(403).json({
+        status: "error",
+        message: "Accés prohibit",
+      });
+    }
+    next();
+  };
 };
 
 module.exports = roleMiddleware;
