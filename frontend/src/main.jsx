@@ -23,6 +23,7 @@ import Profile from "./pages/Profile.jsx";
 import Register from "./pages/Register.jsx";
 import UserDashboard from "./pages/user/Dashboard.jsx";
 import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
+import NotFound from "./pages/NotFound.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -87,6 +88,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
               <Route path="orders/:id" element={<AdminOrderDetail />} />
               <Route path="users" element={<AdminUsers />} />
             </Route>
+
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
       </CartProvider>

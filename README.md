@@ -1,8 +1,8 @@
 # Librería Akiba - アキバ書店
 
-![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat&logo=next.js)
 ![React](https://img.shields.io/badge/React-19-61DAFB?style=flat&logo=react)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-38B2AC?style=flat&logo=tailwind-css)
+![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=flat&logo=vite)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-38B2AC?style=flat&logo=tailwind-css)
 ![Node.js](https://img.shields.io/badge/Node.js-22-339933?style=flat&logo=node.js)
 ![MongoDB](https://img.shields.io/badge/MongoDB-7-47A248?style=flat&logo=mongodb)
 ![Docker](https://img.shields.io/badge/Docker-24249CE?style=flat&logo=docker)
@@ -40,10 +40,10 @@
 
 | Tecnología | Propósito |
 |-------------|-----------|
-| Next.js 15 | Framework React con Server Components |
 | React 19 | Biblioteca de interfaces de usuario |
-| Tailwind CSS | Framework de estilos utility-first |
-| TypeScript | Tipado estático |
+| Vite 7 | Build tool y servidor de desarrollo |
+| React Router 7 | Enrutamiento del lado del cliente |
+| Tailwind CSS 4 | Framework de estilos utility-first |
 
 ### Backend
 
@@ -58,29 +58,26 @@
 | Tecnología | Propósito |
 |-------------|-----------|
 | Docker | Containerización |
+| Docker Compose | Orquestación de contenedores |
 | MongoDB | Base de datos documental |
+| Redis | Caché (futura implementación) |
 
 ## Estructura del Proyecto
 
 ```
 shop_books/
-├── backend/               # API REST - Node.js + Express
+├── docker/                     # Configuración Docker
+│   ├── docker-compose.dev.yml  # Compose unificado (desarrollo)
+│   └── .env.example            # Variables de entorno ejemplo
+├── backend/                    # API REST - Node.js + Express
+│   └── api/
+│       ├── src/               # Código fuente
+│       ├── Dockerfile         # imagen multi-stage
+│       └── .env               # Variables (ignoradas en git)
+├── frontend/                   # Aplicación React + Vite
 │   ├── src/
-│   │   ├── config/       # Configuraciones
-│   │   ├── controllers/ # Lógica de negocio
-│   │   ├── models/      # Modelos de datos
-│   │   ├── routes/      # Rutas de API
-│   │   └── middleware/  # Middlewares
-│   └── package.json
-├── frontend/             # Aplicación Next.js
-│   ├── src/
-│   │   ├── app/         # App Router
-│   │   ├── components/ # Componentes React
-│   │   ├── lib/        # Utilidades
-│   │   └── styles/     # Estilos globales
-│   └── package.json
-├── docker-compose.yml    # Orquestación de contenedores
-├── Makefile             # Scripts de automatización
+│   ├── Dockerfile
+│   └── .env
 └── README.md
 ```
 
@@ -98,40 +95,75 @@ shop_books/
 git clone https://github.com/tuusuario/shop_books.git
 cd shop_books
 
-# Iniciar los servicios con Docker
-make up
+# Copiar variables de entorno de ejemplo (Docker)
+cp docker/.env.example docker/.env
+
+# Iniciar los servicios con Docker Compose
+docker-compose -f docker/docker-compose.dev.yml up -d
 
 # Los servicios estarán disponibles en:
-# - Frontend: http://localhost:3000
-# - Backend API: http://localhost:5000
+# - Frontend: http://localhost:8080
+# - Backend API: http://localhost:3000/api
 # - MongoDB: mongodb://localhost:27017
+# - Redis: localhost:6379 (contraseña: admin1234)
 ```
 
 ### Comandos de Docker
 
 ```bash
-make up     # Iniciar todos los servicios
-make down  # Detener todos los servicios
-make logs  # Ver logs en tiempo real
-make rebuild # Reconstruir contenedores
+# Iniciar todos los servicios (modo development)
+docker-compose -f docker/docker-compose.dev.yml up
+
+# Iniciar en segundo plano
+docker-compose -f docker/docker-compose.dev.yml up -d
+
+# Detener todos los servicios
+docker-compose -f docker/docker-compose.dev.yml down
+
+# Ver logs en tiempo real
+docker-compose -f docker/docker-compose.dev.yml logs -f
+
+# Reconstruir contenedores (cuando cambian Dockerfiles)
+docker-compose -f docker/docker-compose.dev.yml build --no-cache
+
+# Detener y eliminar volúmenes (¡cuidado! borra datos de MongoDB)
+docker-compose -f docker/docker-compose.dev.yml down -v
 ```
 
 ## Variables de Entorno
 
-### Backend (.env)
+### Docker (nivel compose)
+
+**Archivo:** `docker/.env` (copiar desde `docker/.env.example`)
 
 ```env
-PORT=5000
-MONGO_URI=mongodb://mongo:27017/akiba
-JWT_SECRET=tu_secret_aqui
-NODE_ENV=development
+MONGO_ROOT_USERNAME=admin
+MONGO_ROOT_PASSWORD=admin
 ```
 
-### Frontend (.env.local)
+### Backend API
+
+**Archivo:** `backend/api/.env` (autogenerado por el seed en producción)
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:5000
-NEXT_PUBLIC_APP_URL=http://localhost:3000
+PORT=3000
+MONGO_URI=mongodb://admin:admin@mongodb:27017/ecommerce?authSource=admin
+JWT_SECURE_KEY=<generado-automaticamente>
+JWT_REFRESH_KEY=<generado-automaticamente>
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+FRONTEND_URL=http://localhost:8080
+```
+
+> **Nota:** En desarrollo, el seed poblará la base de datos automáticamente al iniciar si está vacía.
+
+### Frontend
+
+**Archivo:** `frontend/.env`
+
+```env
+VITE_API_URL=http://localhost:3000/api
+VITE_STRIPE_PUBLIC_KEY=pk_test_...
 ```
 
 ## Scripts Disponibles

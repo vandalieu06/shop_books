@@ -24,11 +24,30 @@ const getMetrics = async () => {
 		statusCounts[item._id] = item.count;
 	});
 
+	const monthlyOrdersResult = await Order.aggregate([
+		{
+			$group: {
+				_id: {
+					year: { $year: "$createdAt" },
+					month: { $month: "$createdAt" },
+				},
+				count: { $sum: 1 },
+			},
+		},
+		{ $sort: { "_id.year": 1, "_id.month": 1 } },
+	]);
+
+	const monthlyOrders = monthlyOrdersResult.map((item) => ({
+		month: `${item._id.year}-${String(item._id.month).padStart(2, "0")}`,
+		count: item.count,
+	}));
+
 	return {
 		usersCount,
 		ordersCount,
 		revenue,
 		ordersByStatus: statusCounts,
+		monthlyOrders,
 	};
 };
 

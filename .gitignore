@@ -1,6 +1,8 @@
 .env
+docker/.env
 node_modules/
 .vscode/
 .agents/
 .obsidian/
 skills-lock.json
+

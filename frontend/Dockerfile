@@ -20,6 +20,6 @@ RUN corepack enable
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-EXPOSE 8080
+EXPOSE 5173
 
 CMD ["pnpm", "run", "dev", "--host", "0.0.0.0"]

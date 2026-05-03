@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { BookOpen, Users, ShoppingCart, TrendingUp, Package, ArrowRight } from "lucide-react";
+import { Users, ShoppingCart, TrendingUp, Package, ArrowRight } from "lucide-react";
 import { adminApi } from "../../api";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { Skeleton } from "../../components/ui/skeleton";
+import OrdersChart from "../../components/ui/OrdersChart";
+import OrdersByStatusChart from "../../components/ui/OrdersByStatusChart";
 
 const StatCard = ({ title, value, icon: Icon, description }) => (
 	<Card>
@@ -87,14 +89,6 @@ const AdminDashboard = () => {
 		},
 	];
 
-	const statusColors = {
-		Pending: "bg-yellow-100 text-yellow-800",
-		Paid: "bg-blue-100 text-blue-800",
-		Shipped: "bg-purple-100 text-purple-800",
-		Delivered: "bg-green-100 text-green-800",
-		Cancelled: "bg-red-100 text-red-800",
-	};
-
 	return (
 		<div className="p-6 space-y-6">
 			<div>
@@ -108,23 +102,10 @@ const AdminDashboard = () => {
 				))}
 			</div>
 
-			<Card>
-				<CardHeader>
-					<CardTitle className="text-lg">Orders by Status</CardTitle>
-				</CardHeader>
-				<CardContent>
-					<div className="flex flex-wrap gap-3">
-						{Object.entries(metrics?.ordersByStatus || {}).map(([status, count]) => (
-							<span
-								key={status}
-								className={`px-3 py-1 rounded-full text-sm font-medium ${statusColors[status] || "bg-gray-100 text-gray-800"}`}
-							>
-								{status}: {count}
-							</span>
-						))}
-					</div>
-				</CardContent>
-			</Card>
+			<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+				<OrdersChart data={metrics?.monthlyOrders || []} />
+				<OrdersByStatusChart data={metrics?.ordersByStatus || {}} />
+			</div>
 
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 				<Link

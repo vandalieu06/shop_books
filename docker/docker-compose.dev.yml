@@ -3,8 +3,8 @@ services:
     image: mongo:latest
     restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:-admin}
     ports:
       - "27017:27017"
     command: --quiet
@@ -20,7 +20,7 @@ services:
 
   api:
     build:
-      context: ./api
+      context: ../backend/api
       target: dev
     container_name: backend_api
     ports:
@@ -29,12 +29,13 @@ services:
       mongodb:
         condition: service_healthy
     env_file:
-      - ./api/.env
+      - ../backend/api/.env
     volumes:
-      - ./api:/api
+      - ../backend/api:/api
       - /api/node_modules
     networks:
       - app_shop_network
+    restart: unless-stopped
 
   cache:
     image: redis:7.4-alpine
@@ -44,6 +45,27 @@ services:
     command: redis-server --save 20 1 --loglevel warning --requirepass admin1234
     volumes:
       - cache:/data
+    networks:
+      - app_shop_network
+
+  frontend:
+    build:
+      context: ../frontend
+      target: dev
+    container_name: vite_app
+    ports:
+      - "8080:5173"
+    volumes:
+      - ../frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - WATCHPACK_POLLING=true
+    networks:
+      - app_shop_network
+    depends_on:
+      - api
+    restart: unless-stopped
 
 volumes:
   mongodb:
@@ -52,4 +74,4 @@ volumes:
 
 networks:
   app_shop_network:
-    external: true
+    driver: bridge
