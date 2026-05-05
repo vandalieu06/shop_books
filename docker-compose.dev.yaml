@@ -7,7 +7,6 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:-admin}
     ports:
       - "27017:27017"
-    command: --quiet
     volumes:
       - mongodb:/data/db
     networks:
@@ -20,7 +19,7 @@ services:
 
   api:
     build:
-      context: ../backend/api
+      context: backend/api
       target: dev
     container_name: backend_api
     ports:
@@ -29,9 +28,9 @@ services:
       mongodb:
         condition: service_healthy
     env_file:
-      - ../backend/api/.env
+      - backend/api/.env
     volumes:
-      - ../backend/api:/api
+      - ./backend/api:/api
       - /api/node_modules
     networks:
       - app_shop_network
@@ -50,13 +49,13 @@ services:
 
   frontend:
     build:
-      context: ../frontend
+      context: frontend
       target: dev
     container_name: vite_app
     ports:
       - "8080:5173"
     volumes:
-      - ../frontend:/app
+      - ./frontend:/app
       - /app/node_modules
     environment:
       - NODE_ENV=development

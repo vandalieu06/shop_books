@@ -1,0 +1,92 @@
+services:
+  mongodb:
+    image: mongo:latest
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+    volumes:
+      - mongodb:/data/db
+    networks:
+      - app_shop_network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    labels:
+      - "traefik.enable=false"
+
+  cache:
+    image: redis:7.4-alpine
+    restart: always
+    command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD:-admin1234}
+    volumes:
+      - cache:/data
+    networks:
+      - app_shop_network
+    labels:
+      - "traefik.enable=false"
+
+  api:
+    build:
+      context: backend/api
+      target: production
+    container_name: shop_books_api
+    ports:
+      - "3000:3000"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    env_file:
+      - backend/api/.env
+    networks:
+      - app_shop_network
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--tries=1",
+          "--spider",
+          "http://localhost:3000/health",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  nginx:
+    build:
+      context: frontend/
+      target: production
+    container_name: shop_books_nginx
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+    networks:
+      - app_shop_network
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--tries=1",
+          "--spider",
+          "http://localhost/health",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  mongodb:
+  cache:
+
+networks:
+  app_shop_network:
+    driver: bridge

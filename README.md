@@ -10,7 +10,7 @@
 > Tienda online de libros construida con un enfoque moderno, escalable y centrado en la experiencia del usuario.
 
 - **Dominio**: [libreríaakiba.com](https://libreríaakiba.com)
-- **Plataforma**: Docker (Containerized)
+- **Plataforma**: Docker y Podman (Containerized)
 
 ## Tabla de Contenidos
 
@@ -66,9 +66,8 @@
 
 ```
 shop_books/
-├── docker/                     # Configuración Docker
-│   ├── docker-compose.dev.yml  # Compose unificado (desarrollo)
-│   └── .env.example            # Variables de entorno ejemplo
+├── docker-compose.dev.yaml     # Compose desarrollo
+├── docker-compose.prod.yaml    # Compose producción
 ├── backend/                    # API REST - Node.js + Express
 │   └── api/
 │       ├── src/               # Código fuente
@@ -77,6 +76,7 @@ shop_books/
 ├── frontend/                   # Aplicación React + Vite
 │   ├── src/
 │   ├── Dockerfile
+│   ├── nginx.conf
 │   └── .env
 └── README.md
 ```
@@ -94,12 +94,13 @@ shop_books/
 # Clonar el repositorio
 git clone https://github.com/tuusuario/shop_books.git
 cd shop_books
+```
 
-# Copiar variables de entorno de ejemplo (Docker)
-cp docker/.env.example docker/.env
+### Desarrollo
 
-# Iniciar los servicios con Docker Compose
-docker-compose -f docker/docker-compose.dev.yml up -d
+```bash
+# Iniciar servicios en segundo plano
+docker compose -f docker-compose.dev.yaml up --build -d
 
 # Los servicios estarán disponibles en:
 # - Frontend: http://localhost:8080
@@ -108,37 +109,51 @@ docker-compose -f docker/docker-compose.dev.yml up -d
 # - Redis: localhost:6379 (contraseña: admin1234)
 ```
 
+### Producción
+
+```bash
+# Copiar variables de entorno de producción
+cp docker/.env.prod.example .env.prod
+
+# Iniciar servicios en segundo plano
+docker compose -f docker-compose.prod.yaml --env-file .env.prod up --build -d
+```
+
 ### Comandos de Docker
 
 ```bash
-# Iniciar todos los servicios (modo development)
-docker-compose -f docker/docker-compose.dev.yml up
+# Desarrollo
+docker compose -f docker-compose.dev.yaml up --build -d      # Iniciar
+docker compose -f docker-compose.dev.yaml down                # Detener
+docker compose -f docker-compose.dev.yaml logs -f            # Ver logs
+docker compose -f docker-compose.dev.yaml down -v            # Detener + eliminar volúmenes
 
-# Iniciar en segundo plano
-docker-compose -f docker/docker-compose.dev.yml up -d
-
-# Detener todos los servicios
-docker-compose -f docker/docker-compose.dev.yml down
-
-# Ver logs en tiempo real
-docker-compose -f docker/docker-compose.dev.yml logs -f
-
-# Reconstruir contenedores (cuando cambian Dockerfiles)
-docker-compose -f docker/docker-compose.dev.yml build --no-cache
-
-# Detener y eliminar volúmenes (¡cuidado! borra datos de MongoDB)
-docker-compose -f docker/docker-compose.dev.yml down -v
+# Producción
+docker compose -f docker-compose.prod.yaml --env-file .env.prod up --build -d
+docker compose -f docker-compose.prod.yaml --env-file .env.prod down
+docker compose -f docker-compose.prod.yaml --env-file .env.prod logs -f
 ```
 
 ## Variables de Entorno
 
-### Docker (nivel compose)
+### Desarrollo
 
-**Archivo:** `docker/.env` (copiar desde `docker/.env.example`)
+**Archivo:** `.env`
 
 ```env
 MONGO_ROOT_USERNAME=admin
 MONGO_ROOT_PASSWORD=admin
+REDIS_PASSWORD=admin1234
+```
+
+### Producción
+
+**Archivo:** `.env.prod`
+
+```env
+MONGO_ROOT_USERNAME=admin
+MONGO_ROOT_PASSWORD=<password-seguro>
+REDIS_PASSWORD=<password-seguro>
 ```
 
 ### Backend API
