@@ -1,103 +1,124 @@
 const userService = require("../services/userService");
 
 const login = async (req, res) => {
-	try {
-		const { accessToken, refreshToken, user } = await userService.login(
-			req.body.email,
-			req.body.password,
-		);
+  try {
+    const { accessToken, refreshToken, user } = await userService.login(
+      req.body.email,
+      req.body.password,
+    );
 
-		res.status(200).json({
-			status: "success",
-			data: {
-				accessToken,
-				refreshToken,
-				user,
-			},
-		});
-	} catch (error) {
-		res.status(401).json({ status: "error", message: error.message });
-	}
+    req.log.info(
+      {
+        userId: user._id,
+        email: user.email,
+      },
+      "User logged in successfully",
+    );
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        accessToken,
+        refreshToken,
+        user,
+      },
+    });
+  } catch (error) {
+    req.log.warn(
+      {
+        email: req.body.email,
+      },
+      "Invalid login attempt",
+    );
+    res.status(401).json({ status: "error", message: error.message });
+  }
 };
 
 const register = async (req, res) => {
-	try {
-		const { accessToken, refreshToken, user } = await userService.register(
-			req.body,
-		);
+  try {
+    const { accessToken, refreshToken, user } = await userService.register(
+      req.body,
+    );
 
-		res.status(201).json({
-			status: "success",
-			data: {
-				accessToken,
-				refreshToken,
-				user,
-			},
-		});
-	} catch (error) {
-		res.status(400).json({ status: "error", message: error.message });
-	}
+    res.status(201).json({
+      status: "success",
+      data: {
+        accessToken,
+        refreshToken,
+        user,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({ status: "error", message: error.message });
+  }
 };
 
 const logout = async (req, res) => {
-	try {
-		const userId = req.user?.id;
-		if (userId) await userService.logout(userId);
+  try {
+    const userId = req.user?.id;
+    if (userId) {
+      await userService.logout(userId);
+      req.log.info({ userId }, "User logged out");
+    }
 
-		res.status(200).json({ status: "success", message: "Logout exitoso" });
-	} catch (error) {
-		res.status(500).json({ status: "error", message: error.message });
-	}
+    res.status(200).json({ status: "success", message: "Logout exitoso" });
+  } catch (error) {
+    req.log.error(
+      { userId: req.user?.id, error: error.message },
+      "Logout failed",
+    );
+    res.status(500).json({ status: "error", message: error.message });
+  }
 };
 
 const refresh = async (req, res) => {
-	const { refreshToken: oldRefreshToken } = req.body;
+  const { refreshToken: oldRefreshToken } = req.body;
 
-	if (!oldRefreshToken) {
-		return res
-			.status(400)
-			.json({ status: "error", message: "Refresh Token no proporcionado" });
-	}
+  if (!oldRefreshToken) {
+    return res
+      .status(400)
+      .json({ status: "error", message: "Refresh Token no proporcionado" });
+  }
 
-	try {
-		const data = await userService.rotateRefreshToken(oldRefreshToken);
-		const { newAccessToken, newRefreshToken, user } = data;
+  try {
+    const data = await userService.rotateRefreshToken(oldRefreshToken);
+    const { newAccessToken, newRefreshToken, user } = data;
 
-		res.status(200).json({
-			status: "success",
-			data: {
-				accessToken: newAccessToken,
-				refreshToken: newRefreshToken,
-				user,
-			},
-		});
-	} catch (error) {
-		res.status(403).json({
-			status: "error",
-			message: error.message || "Acceso denegado. Vuelve a iniciar sesión.",
-		});
-	}
+    res.status(200).json({
+      status: "success",
+      data: {
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
+        user,
+      },
+    });
+  } catch (error) {
+    res.status(403).json({
+      status: "error",
+      message: error.message || "Acceso denegado. Vuelve a iniciar sesión.",
+    });
+  }
 };
 
 const me = async (req, res) => {
-	try {
-		const userId = req.user?.id;
-		if (!userId) {
-			return res
-				.status(401)
-				.json({ status: "error", message: "No autorizado" });
-		}
-		const user = await userService.getCurrentUser(userId);
-		res.status(200).json({ status: "success", data: user });
-	} catch (error) {
-		res.status(401).json({ status: "error", message: error.message });
-	}
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ status: "error", message: "No autorizado" });
+    }
+    const user = await userService.getCurrentUser(userId);
+    res.status(200).json({ status: "success", data: user });
+  } catch (error) {
+    res.status(401).json({ status: "error", message: error.message });
+  }
 };
 
 module.exports = {
-	login,
-	register,
-	logout,
-	refresh,
-	me,
+  login,
+  register,
+  logout,
+  refresh,
+  me,
 };

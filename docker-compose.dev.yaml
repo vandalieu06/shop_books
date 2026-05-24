@@ -36,17 +36,6 @@ services:
       - app_shop_network
     restart: unless-stopped
 
-  cache:
-    image: redis:7.4-alpine
-    restart: always
-    ports:
-      - "6379:6379"
-    command: redis-server --save 20 1 --loglevel warning --requirepass admin1234
-    volumes:
-      - cache:/data
-    networks:
-      - app_shop_network
-
   frontend:
     build:
       context: frontend
@@ -68,8 +57,6 @@ services:
 
 volumes:
   mongodb:
-  cache:
-    driver: local
 
 networks:
   app_shop_network:

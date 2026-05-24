@@ -18,6 +18,12 @@ const reviewRoutes = require("./routes/reviewRouter.js");
 const wishlistRoutes = require("./routes/wishlistRouter.js");
 const checkoutRoutes = require("./routes/checkoutRouter.js");
 
+// Observability
+const requestId = require("./middleware/requestId");
+const httpLogger = require("./middleware/httpLogger");
+const healthRoutes = require("./routes/healthRoutes");
+const errorHandler = require("./middleware/errorHandler");
+
 //Swagger Api Docs
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./docs/swagger");
@@ -50,6 +56,10 @@ app.use(
   }),
 );
 
+// Observability middleware
+app.use(requestId);
+app.use(httpLogger);
+
 // Seeds
 const runSeedIfNeeded = async () => {
   try {
@@ -81,5 +91,18 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/checkout", checkoutRoutes);
+
+// Health and metrics
+app.use("/api", healthRoutes);
+
+// Debug endpoint (not in production)
+if (process.env.NODE_ENV !== "production") {
+  app.get("/api/debug/error", (req, res, next) => {
+    next(new Error("Error de prova per observabilitat"));
+  });
+}
+
+// Error handler (must be last)
+app.use(errorHandler);
 
 app.listen(PORT, () => console.log(`Servidor escoltant al port ${PORT}`));

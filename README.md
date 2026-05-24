@@ -60,7 +60,6 @@
 | Docker | Containerización |
 | Docker Compose | Orquestación de contenedores |
 | MongoDB | Base de datos documental |
-| Redis | Caché (futura implementación) |
 
 ## Estructura del Proyecto
 
@@ -106,7 +105,6 @@ docker compose -f docker-compose.dev.yaml up --build -d
 # - Frontend: http://localhost:8080
 # - Backend API: http://localhost:3000/api
 # - MongoDB: mongodb://localhost:27017
-# - Redis: localhost:6379 (contraseña: admin1234)
 ```
 
 ### Producción
@@ -143,7 +141,6 @@ docker compose -f docker-compose.prod.yaml --env-file .env.prod logs -f
 ```env
 MONGO_ROOT_USERNAME=admin
 MONGO_ROOT_PASSWORD=admin
-REDIS_PASSWORD=admin1234
 ```
 
 ### Producción
@@ -153,7 +150,6 @@ REDIS_PASSWORD=admin1234
 ```env
 MONGO_ROOT_USERNAME=admin
 MONGO_ROOT_PASSWORD=<password-seguro>
-REDIS_PASSWORD=<password-seguro>
 ```
 
 ### Backend API

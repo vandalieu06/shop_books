@@ -17,17 +17,6 @@ services:
     labels:
       - "traefik.enable=false"
 
-  cache:
-    image: redis:7.4-alpine
-    restart: always
-    command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD:-admin1234}
-    volumes:
-      - cache:/data
-    networks:
-      - app_shop_network
-    labels:
-      - "traefik.enable=false"
-
   api:
     build:
       context: backend/api
@@ -85,7 +74,6 @@ services:
 
 volumes:
   mongodb:
-  cache:
 
 networks:
   app_shop_network:

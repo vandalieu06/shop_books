@@ -13,7 +13,7 @@ const webhook = async (req, res) => {
       event = req.body;
     }
   } catch (err) {
-    console.error("Webhook signature verification failed:", err.message);
+    req.log.error({ error: err.message }, "Webhook signature verification failed");
     return res.status(400).json({ message: "Error en el pagament" });
   }
 
@@ -24,9 +24,9 @@ const webhook = async (req, res) => {
         setTimeout(() => reject(new Error("Timeout processing webhook")), 25000)
       );
       await Promise.race([checkoutService.createOrderFromSession(session), timeoutPromise]);
-      console.log("Order created from webhook:", session.id);
+      req.log.info({ sessionId: session.id }, "Payment confirmed");
     } catch (error) {
-      console.error("Error creating order from webhook:", error.message);
+      req.log.error({ sessionId: session.id, error: error.message }, "Payment failed");
       return res.status(500).json({ message: "Error en el pagament" });
     }
   }
@@ -50,8 +50,10 @@ const createSession = async (req, res) => {
     }
 
     const result = await checkoutService.createCheckoutSession(items, userId);
+    req.log.info({ userId, total: result.session?.amount_total }, "Checkout session created");
     res.json({ status: "success", data: result });
   } catch (error) {
+    req.log.error({ userId: req.user?.id, error: error.message }, "Checkout session failed");
     const message = error.message || "Error en el pagament";
     if (message.includes("no trobat") || message.includes("Stock insuficient") || message.includes("preu invàlid")) {
       return res.status(400).json({ message });
